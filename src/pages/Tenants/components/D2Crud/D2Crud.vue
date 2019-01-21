@@ -7,7 +7,7 @@
       ref="d2Crud"
       :columns="columns"
       :data="data"
-      title="D2 CRUD"
+      title="所有租户"
       selection-row
       index-row
       add-mode
@@ -35,61 +35,28 @@ Vue.use(D2Crud)
 export default {
   data() {
     return {
-      columns: [
-        {
-          title: '日期',
-          key: 'date',
-          width: '180',
-          sortable: true
-        },
+      columns: [        
         {
           title: '姓名',
           key: 'name',
           width: '180'
         },
         {
-          title: '地址',
-          key: 'address'
-        }
+          title: '租户名称',
+          key: 'tenancyName'
+        },
+        {
+          title: '激活',
+          key: 'isActive'
+        },
+        {
+          title: 'ID',
+          key: 'id',
+          width: '60',
+          sortable: true
+        },
       ],
-      data: [
-        {
-          date: '2016-05-02',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1518 弄',
-          forbidEdit: false,
-          showEditButton: true,
-          forbidRemove: true,
-          showRemoveButton: true
-        },
-        {
-          date: '2016-05-04',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1517 弄',
-          forbidEdit: true,
-          showEditButton: true,
-          forbidRemove: false,
-          showRemoveButton: true
-        },
-        {
-          date: '2016-05-01',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1519 弄',
-          forbidEdit: false,
-          showEditButton: false,
-          forbidRemove: false,
-          showRemoveButton: false
-        },
-        {
-          date: '2016-05-03',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1516 弄',
-          forbidEdit: false,
-          showEditButton: true,
-          forbidRemove: false,
-          showRemoveButton: true
-        }
-      ],
+      data: [],
       addButton: {
         icon: 'el-icon-plus',
         size: 'small'
@@ -100,153 +67,46 @@ export default {
           icon: 'el-icon-edit',
           text: '编辑',
           size: 'small',
-          show (index, row) {
-            if (row.showEditButton) {
-              return true
-            }
-            return false
-          },
-          disabled (index, row) {
-            if (row.forbidEdit) {
-              return true
-            }
-            return false
-          }
         },
         remove: {
           icon: 'el-icon-delete',
           size: 'small',
           fixed: 'right',
           confirm: true,
-          show (index, row) {
-            if (row.showRemoveButton) {
-              return true
-            }
-            return false
-          },
-          disabled (index, row) {
-            if (row.forbidRemove) {
-              return true
-            }
-            return false
-          }
         }
       },
       formTemplate: {
-        date: {
-          title: '日期',
+        id: {
+          title: 'ID',
           value: '',
           component: {
-            span: 12
+            span: 12,
+            disabled: true
           }
         },
         name: {
           title: '姓名',
           value: '',
-          component: {
-            name: 'el-select',
-            options: [
-              {
-                value: '王小虎',
-                label: '王小虎'
-              },
-              {
-                value: '王中虎',
-                label: '王中虎'
-              },
-              {
-                value: '王老虎',
-                label: '王老虎'
-              }
-            ],
-            clearable: true,
-            span: 12
-          }
         },
-        address: {
-          title: '地址',
+        tenancyName: {
+          title: '租户名称',
           value: '',
           component: {
             span: 24
           }
         },
-        forbidEdit: {
-          title: '阻止编辑',
+        isActive: {
+          title: '激活',
           value: false,
           component: {
-            name: 'el-radio',
-            options: [
-              {
-                value: true,
-                label: '是'
-              },
-              {
-                value: false,
-                label: '否'
-              }
-            ],
+            name: 'el-switch',
             span: 12
           }
         },
-        showEditButton: {
-          title: '显示编辑',
-          value: true,
-          component: {
-            name: 'el-radio',
-            options: [
-              {
-                value: true,
-                label: '是'
-              },
-              {
-                value: false,
-                label: '否'
-              }
-            ],
-            span: 12
-          }
-        },
-        forbidRemove: {
-          title: '阻止删除',
-          value: false,
-          component: {
-            name: 'el-radio',
-            options: [
-              {
-                value: true,
-                label: '是'
-              },
-              {
-                value: false,
-                label: '否'
-              }
-            ],
-            span: 12
-          }
-        },
-        showRemoveButton: {
-          title: '显示删除',
-          value: true,
-          component: {
-            name: 'el-radio',
-            options: [
-              {
-                value: true,
-                label: '是'
-              },
-              {
-                value: false,
-                label: '否'
-              }
-            ],
-            span: 12
-          }
-        }
       },
       formRules: {
-        date: [ { required: true, message: '请输入日期', trigger: 'blur' } ],
-        name: [ { required: true, message: '请输入姓名', trigger: 'change' } ],
-        address: [ { required: true, message: '请输入地址', trigger: 'blur' } ]
+        name: [ { required: true, message: '请输入名称', trigger: 'change' } ],
+        tenancyName: [ { required: true, message: '请输入租户名称', trigger: 'blur' } ]
       },
       formOptions: {
         labelWidth: '80px',
@@ -256,18 +116,19 @@ export default {
       },
       pagination: {
         currentPage: 1,
-        pageSize: 5,
+        pageSize: 10,
         total: 0
       }
     }
   },
   mounted () {
-      //this.GetAll({
-      //  vm: this,
-      //  skipCount:0,
-      //  maxResultCount:10}).then(res=>{
-      //   this.data =  res
-      //  })
+      this.GetAll({
+        vm: this,
+        skipCount:(this.pagination.currentPage-1)*this.pagination.pageSize,
+        maxResultCount:this.pagination.pageSize}).then(res=>{
+          console.log("datas: ",res)
+         this.data =  res.result
+        })
   },
   methods: {
     ...mapActions('d2admin/Tenants', [

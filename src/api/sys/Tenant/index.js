@@ -2,7 +2,7 @@ import request from '@/plugin/axios'
 
 export function TenantGetAll (data) {
     return request({
-      url: '/services/app/Tenant/GetAll',
+      url: '/services/app/Tenant/GetLists',
       method: 'get',
       params: data
     })

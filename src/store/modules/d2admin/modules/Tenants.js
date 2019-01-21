@@ -1,26 +1,20 @@
 import util from '@/libs/util.js'
-import { TenantGetAll,TenantGet,TenantDel,TenantCreate } from '@/api/sys/Tenant'
+import { TenantGetAll, TenantGet, TenantDel, TenantCreate } from '@/api/sys/Tenant'
 
 export default {
     namespaced: true,
     actions: {
-        GetAll({ dispatch },{
+        GetAll({ dispatch }, {
             vm,
             skipCount,
             maxResultCount
-        }){
-            let result=[]
-            TenantGetAll({
+        }) {
+            return TenantGetAll({
                 SkipCount: skipCount,
                 MaxResultCount: maxResultCount
-            }).then(async res => {
-                result = res.result
-                console.log(res)
-              })
-              .catch(err => {
+            }).catch(err => {
                 console.log('err: ', err)
-              })
-              return result
+            })
         }
     }
 }
