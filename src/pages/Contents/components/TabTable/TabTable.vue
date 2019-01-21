@@ -52,7 +52,7 @@ export default {
       loading: true,
       pagination: {
         currentPage: 1,
-        pageSize: 2,
+        pageSize: 10,
         total:100000,
         layout: 'prev, pager, next, total'
       },
