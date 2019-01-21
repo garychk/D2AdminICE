@@ -21,96 +21,112 @@
       @row-edit="handleRowEdit"
       @row-remove="handleRowRemove"
       @dialog-cancel="handleDialogCancel"
-      @selection-change="handleSelectionChange"/>
+      @selection-change="handleSelectionChange"
+    />
   </div>
 </template>
 
 <script>
-import Vue from 'vue'
-import D2Crud from '@d2-projects/d2-crud'
-import { mapActions } from 'vuex'
+import Vue from "vue";
+import D2Crud from "@d2-projects/d2-crud";
+import { mapActions } from "vuex";
 
-Vue.use(D2Crud)
+Vue.use(D2Crud);
 
 export default {
   data() {
     return {
-      columns: [        
+      columns: [
         {
-          title: '姓名',
-          key: 'name',
-          width: '180'
+          title: "名称",
+          key: "name",
+          width: "180"
         },
         {
-          title: '租户名称',
-          key: 'tenancyName'
+          title: "租户名称",
+          key: "tenancyName"
         },
         {
-          title: '激活',
-          key: 'isActive'
+          title: "激活",
+          key: "isActive"
         },
         {
-          title: 'ID',
-          key: 'id',
-          width: '60',
+          title: "ID",
+          key: "id",
+          width: "100",
           sortable: true
-        },
+        }
       ],
       data: [],
+      createData: {
+        tenancyName: "",
+        name: "",
+        adminEmailAddress: "",
+        connectionString: "",
+        isActive: true
+      },
       addButton: {
-        icon: 'el-icon-plus',
-        size: 'small'
+        icon: "el-icon-plus",
+        size: "small"
       },
       rowHandle: {
-        columnHeader: '编辑表格',
+        columnHeader: "编辑表格",
         edit: {
-          icon: 'el-icon-edit',
-          text: '编辑',
-          size: 'small',
+          icon: "el-icon-edit",
+          text: "编辑",
+          size: "small"
         },
         remove: {
-          icon: 'el-icon-delete',
-          size: 'small',
-          fixed: 'right',
+          icon: "el-icon-delete",
+          size: "small",
+          fixed: "right",
           confirm: true,
+          disabled (index, row) {
+            if (row.name=='Default') {
+              return true
+            }
+            return false
+          }
         }
       },
       formTemplate: {
         id: {
-          title: 'ID',
-          value: '',
+          title: "ID",
+          value: "",
           component: {
             span: 12,
             disabled: true
           }
         },
         name: {
-          title: '姓名',
-          value: '',
+          title: "名称",
+          value: ""
         },
         tenancyName: {
-          title: '租户名称',
-          value: '',
+          title: "租户名称",
+          value: "",
           component: {
             span: 24
           }
         },
         isActive: {
-          title: '激活',
+          title: "激活",
           value: false,
           component: {
-            name: 'el-switch',
+            name: "el-switch",
             span: 12
           }
-        },
+        }
       },
       formRules: {
-        name: [ { required: true, message: '请输入名称', trigger: 'change' } ],
-        tenancyName: [ { required: true, message: '请输入租户名称', trigger: 'blur' } ]
+        name: [{ required: true, message: "请输入名称", trigger: "change" }],
+        tenancyName: [
+          { required: true, message: "请输入租户名称", trigger: "blur" }
+        ]
       },
       formOptions: {
-        labelWidth: '80px',
-        labelPosition: 'left',
+        labelWidth: "80px",
+        labelPosition: "left",
         saveLoading: false,
         gutter: 20
       },
@@ -119,68 +135,68 @@ export default {
         pageSize: 10,
         total: 0
       }
-    }
+    };
   },
-  mounted () {
-      this.GetAll({
-        vm: this,
-        skipCount:(this.pagination.currentPage-1)*this.pagination.pageSize,
-        maxResultCount:this.pagination.pageSize}).then(res=>{
-          console.log("datas: ",res)
-         this.data =  res.result
-        })
+  mounted() {
+    this.GetAll({
+      vm: this,
+      skipCount: (this.pagination.currentPage - 1) * this.pagination.pageSize,
+      maxResultCount: this.pagination.pageSize
+    }).then(res => {
+      this.data = res.result;
+    });
   },
   methods: {
-    ...mapActions('d2admin/Tenants', [
-      'GetAll'
-    ]),
-    handleRowAdd (row, done) {
-      this.formOptions.saveLoading = true
-      setTimeout(() => {
-        console.log(row)
+    ...mapActions("d2admin/Tenants", ["GetAll", "CreateOrUpdate"]),
+    handleRowAdd(row, done) {
+      this.formOptions.saveLoading = true;
+      this.createData.name = row.name;
+      this.createData.tenancyName = row.name;
+      this.createData.isActive = row.isActive;
+      this.createData.adminEmailAddress = row.name+"@demo.com";
+      this.CreateOrUpdate(this.createData).then(async res => {
         this.$message({
-          message: '保存成功',
-          type: 'success'
+          message: "添加成功",
+          type: "success"
         });
-        done()
-        this.formOptions.saveLoading = false
+        done();
+        this.formOptions.saveLoading = false;
+      });
+    },
+    handleRowEdit({ index, row }, done) {
+      this.formOptions.saveLoading = true;
+      console.log(index);
+      console.log(row);
+      this.CreateOrUpdate(row).then(async res => {
+        this.$message({
+          message: "编辑成功",
+          type: "success"
+        });
+        done();
+        this.formOptions.saveLoading = false;
+      });
+    },
+    handleRowRemove({ index, row }, done) {
+      setTimeout(() => {
+        console.log(index);
+        console.log(row);
+        this.$message({
+          message: "删除成功",
+          type: "success"
+        });
+        done();
       }, 300);
     },
-    handleRowEdit ({index, row}, done) {
-      this.formOptions.saveLoading = true
-      setTimeout(() => {
-        console.log(index)
-        console.log(row)
-        this.$message({
-          message: '编辑成功',
-          type: 'success'
-        })
-        done()
-        this.formOptions.saveLoading = false
-      }, 300)
-    },
-    handleRowRemove ({index, row}, done) {
-      setTimeout(() => {
-        console.log(index)
-        console.log(row)
-        this.$message({
-          message: '删除成功',
-          type: 'success'
-        })
-        done()
-      }, 300)
-    },
-    handleDialogCancel (done) {
+    handleDialogCancel(done) {
       this.$message({
-        message: '取消保存',
-        type: 'warning'
+        message: "取消保存",
+        type: "warning"
       });
-      done()
+      done();
     },
-    handleSelectionChange (selection) {
-      console.log(selection)
+    handleSelectionChange(selection) {
+      console.log(selection);
     }
   }
-}
-
+};
 </script>
