@@ -269,6 +269,4 @@ export default {
 </script>
 
 <style>
-.tab-table {
-}
 </style>
