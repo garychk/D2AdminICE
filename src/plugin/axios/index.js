@@ -34,7 +34,8 @@ function errorLog (err) {
 // 创建一个 axios 实例
 const service = axios.create({
   baseURL: process.env.VUE_APP_API,
-  timeout: 5000 // 请求超时时间
+  timeout: 5000, // 请求超时时间
+  //withCredentials: true,  
 })
 
 // 请求拦截器
@@ -46,6 +47,8 @@ service.interceptors.request.use(
       if (token && token !== 'undefined') {
         // 让每个请求携带token-- ['X-Token']为自定义key 请根据实际情况自行修改
         config.headers['Authorization'] = 'Bearer '+token
+        //Access-Control-Allow-Origin
+        //config.headers['Access-Control-Allow-Origin'] = '*'
       }
     }
     return config
