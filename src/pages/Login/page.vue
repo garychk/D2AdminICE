@@ -21,11 +21,8 @@
               </el-input>
             </el-form-item>
             <el-form-item prop="code">
-              <el-input type="text" v-model="formLogin.code" placeholder="- - - -">
-                <template slot="prepend">验证码</template>
-                <template slot="append">
-                  <img class="login-code" src="./image/login-code.png">
-                </template>
+              <el-input type="text" v-model="formLogin.tenant" placeholder="">
+                <template slot="prepend">租户名</template>
               </el-input>
             </el-form-item>
             <el-button size="default" @click="submit" type="primary" class="button-login">登录</el-button>
@@ -50,7 +47,7 @@ export default {
       formLogin: {
         username: 'admin',
         password: '',
-        code: 'v9am'
+        tenant: 'Default'
       },
       // 校验
       rules: {
@@ -60,8 +57,8 @@ export default {
         password: [
           { required: true, message: '请输入密码', trigger: 'blur' }
         ],
-        code: [
-          { required: true, message: '请输入验证码', trigger: 'blur' }
+        tenant: [
+          { required: true, message: '请输入租户名', trigger: 'blur' }
         ]
       }
     }

@@ -37,12 +37,32 @@ module.exports =
 /******/ 	// define getter function for harmony exports
 /******/ 	__webpack_require__.d = function(exports, name, getter) {
 /******/ 		if(!__webpack_require__.o(exports, name)) {
-/******/ 			Object.defineProperty(exports, name, {
-/******/ 				configurable: false,
-/******/ 				enumerable: true,
-/******/ 				get: getter
-/******/ 			});
+/******/ 			Object.defineProperty(exports, name, { enumerable: true, get: getter });
 /******/ 		}
+/******/ 	};
+/******/
+/******/ 	// define __esModule on exports
+/******/ 	__webpack_require__.r = function(exports) {
+/******/ 		if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
+/******/ 			Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 		}
+/******/ 		Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 	};
+/******/
+/******/ 	// create a fake namespace object
+/******/ 	// mode & 1: value is a module id, require it
+/******/ 	// mode & 2: merge all properties of value into the ns
+/******/ 	// mode & 4: return value when already ns object
+/******/ 	// mode & 8|1: behave like require
+/******/ 	__webpack_require__.t = function(value, mode) {
+/******/ 		if(mode & 1) value = __webpack_require__(value);
+/******/ 		if(mode & 8) return value;
+/******/ 		if((mode & 4) && typeof value === 'object' && value && value.__esModule) return value;
+/******/ 		var ns = Object.create(null);
+/******/ 		__webpack_require__.r(ns);
+/******/ 		Object.defineProperty(ns, 'default', { enumerable: true, value: value });
+/******/ 		if(mode & 2 && typeof value != 'string') for(var key in value) __webpack_require__.d(ns, key, function(key) { return value[key]; }.bind(null, key));
+/******/ 		return ns;
 /******/ 	};
 /******/
 /******/ 	// getDefaultExport function for compatibility with non-harmony modules
@@ -60,88 +80,52 @@ module.exports =
 /******/ 	// __webpack_public_path__
 /******/ 	__webpack_require__.p = "/dist/";
 /******/
+/******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 207);
+/******/ 	return __webpack_require__(__webpack_require__.s = 112);
 /******/ })
 /************************************************************************/
 /******/ ({
 
-/***/ 14:
-/***/ (function(module, exports) {
-
-module.exports = require("throttle-debounce/debounce");
-
-/***/ }),
-
-/***/ 2:
-/***/ (function(module, exports) {
-
-module.exports = require("element-ui/lib/utils/util");
-
-/***/ }),
-
-/***/ 20:
-/***/ (function(module, exports) {
-
-module.exports = require("element-ui/lib/utils/vdom");
-
-/***/ }),
-
-/***/ 207:
-/***/ (function(module, exports, __webpack_require__) {
+/***/ 112:
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+__webpack_require__.r(__webpack_exports__);
+
+// EXTERNAL MODULE: external "element-ui/lib/utils/vue-popper"
+var vue_popper_ = __webpack_require__(5);
+var vue_popper_default = /*#__PURE__*/__webpack_require__.n(vue_popper_);
+
+// EXTERNAL MODULE: external "throttle-debounce/debounce"
+var debounce_ = __webpack_require__(14);
+var debounce_default = /*#__PURE__*/__webpack_require__.n(debounce_);
+
+// EXTERNAL MODULE: external "element-ui/lib/utils/dom"
+var dom_ = __webpack_require__(2);
+
+// EXTERNAL MODULE: external "element-ui/lib/utils/vdom"
+var vdom_ = __webpack_require__(20);
+
+// EXTERNAL MODULE: external "element-ui/lib/utils/util"
+var util_ = __webpack_require__(4);
+
+// EXTERNAL MODULE: external "vue"
+var external_vue_ = __webpack_require__(6);
+var external_vue_default = /*#__PURE__*/__webpack_require__.n(external_vue_);
+
+// CONCATENATED MODULE: ./packages/tooltip/src/main.js
 
 
-exports.__esModule = true;
-
-var _main = __webpack_require__(208);
-
-var _main2 = _interopRequireDefault(_main);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-/* istanbul ignore next */
-_main2.default.install = function (Vue) {
-  Vue.component(_main2.default.name, _main2.default);
-};
-
-exports.default = _main2.default;
-
-/***/ }),
-
-/***/ 208:
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
 
 
-exports.__esModule = true;
 
-var _vuePopper = __webpack_require__(7);
 
-var _vuePopper2 = _interopRequireDefault(_vuePopper);
 
-var _debounce = __webpack_require__(14);
-
-var _debounce2 = _interopRequireDefault(_debounce);
-
-var _dom = __webpack_require__(3);
-
-var _vdom = __webpack_require__(20);
-
-var _util = __webpack_require__(2);
-
-var _vue = __webpack_require__(4);
-
-var _vue2 = _interopRequireDefault(_vue);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-exports.default = {
+/* harmony default export */ var main = ({
   name: 'ElTooltip',
 
-  mixins: [_vuePopper2.default],
+  mixins: [vue_popper_default.a],
 
   props: {
     openDelay: {
@@ -194,7 +178,7 @@ exports.default = {
 
   computed: {
     tooltipId: function tooltipId() {
-      return 'el-tooltip-' + (0, _util.generateId)();
+      return 'el-tooltip-' + Object(util_["generateId"])();
     }
   },
   beforeCreate: function beforeCreate() {
@@ -202,14 +186,14 @@ exports.default = {
 
     if (this.$isServer) return;
 
-    this.popperVM = new _vue2.default({
+    this.popperVM = new external_vue_default.a({
       data: { node: '' },
       render: function render(h) {
         return this.node;
       }
     }).$mount();
 
-    this.debounceClose = (0, _debounce2.default)(200, function () {
+    this.debounceClose = debounce_default()(200, function () {
       return _this.handleClosePopper();
     });
   },
@@ -257,7 +241,7 @@ exports.default = {
 
     if (!this.$slots.default || !this.$slots.default.length) return this.$slots.default;
 
-    var vnode = (0, _vdom.getFirstComponentChild)(this.$slots.default);
+    var vnode = Object(vdom_["getFirstComponentChild"])(this.$slots.default);
 
     if (!vnode) return vnode;
 
@@ -273,9 +257,9 @@ exports.default = {
     if (this.$el.nodeType === 1) {
       this.$el.setAttribute('aria-describedby', this.tooltipId);
       this.$el.setAttribute('tabindex', 0);
-      (0, _dom.on)(this.referenceElm, 'mouseenter', this.show);
-      (0, _dom.on)(this.referenceElm, 'mouseleave', this.hide);
-      (0, _dom.on)(this.referenceElm, 'focus', function () {
+      Object(dom_["on"])(this.referenceElm, 'mouseenter', this.show);
+      Object(dom_["on"])(this.referenceElm, 'mouseleave', this.hide);
+      Object(dom_["on"])(this.referenceElm, 'focus', function () {
         if (!_this3.$slots.default || !_this3.$slots.default.length) {
           _this3.handleFocus();
           return;
@@ -287,17 +271,17 @@ exports.default = {
           _this3.handleFocus();
         }
       });
-      (0, _dom.on)(this.referenceElm, 'blur', this.handleBlur);
-      (0, _dom.on)(this.referenceElm, 'click', this.removeFocusing);
+      Object(dom_["on"])(this.referenceElm, 'blur', this.handleBlur);
+      Object(dom_["on"])(this.referenceElm, 'click', this.removeFocusing);
     }
   },
 
   watch: {
     focusing: function focusing(val) {
       if (val) {
-        (0, _dom.addClass)(this.referenceElm, 'focusing');
+        Object(dom_["addClass"])(this.referenceElm, 'focusing');
       } else {
-        (0, _dom.removeClass)(this.referenceElm, 'focusing');
+        Object(dom_["removeClass"])(this.referenceElm, 'focusing');
       }
     }
   },
@@ -361,36 +345,69 @@ exports.default = {
     }
   },
 
+  beforeDestroy: function beforeDestroy() {
+    this.popperVM && this.popperVM.$destroy();
+  },
   destroyed: function destroyed() {
     var reference = this.referenceElm;
-    (0, _dom.off)(reference, 'mouseenter', this.show);
-    (0, _dom.off)(reference, 'mouseleave', this.hide);
-    (0, _dom.off)(reference, 'focus', this.handleFocus);
-    (0, _dom.off)(reference, 'blur', this.handleBlur);
-    (0, _dom.off)(reference, 'click', this.removeFocusing);
+    Object(dom_["off"])(reference, 'mouseenter', this.show);
+    Object(dom_["off"])(reference, 'mouseleave', this.hide);
+    Object(dom_["off"])(reference, 'focus', this.handleFocus);
+    Object(dom_["off"])(reference, 'blur', this.handleBlur);
+    Object(dom_["off"])(reference, 'click', this.removeFocusing);
   }
+});
+// CONCATENATED MODULE: ./packages/tooltip/index.js
+
+
+/* istanbul ignore next */
+main.install = function (Vue) {
+  Vue.component(main.name, main);
 };
+
+/* harmony default export */ var tooltip = __webpack_exports__["default"] = (main);
 
 /***/ }),
 
-/***/ 3:
+/***/ 14:
+/***/ (function(module, exports) {
+
+module.exports = require("throttle-debounce/debounce");
+
+/***/ }),
+
+/***/ 2:
 /***/ (function(module, exports) {
 
 module.exports = require("element-ui/lib/utils/dom");
 
 /***/ }),
 
-/***/ 4:
+/***/ 20:
 /***/ (function(module, exports) {
 
-module.exports = require("vue");
+module.exports = require("element-ui/lib/utils/vdom");
 
 /***/ }),
 
-/***/ 7:
+/***/ 4:
+/***/ (function(module, exports) {
+
+module.exports = require("element-ui/lib/utils/util");
+
+/***/ }),
+
+/***/ 5:
 /***/ (function(module, exports) {
 
 module.exports = require("element-ui/lib/utils/vue-popper");
+
+/***/ }),
+
+/***/ 6:
+/***/ (function(module, exports) {
+
+module.exports = require("vue");
 
 /***/ })
 

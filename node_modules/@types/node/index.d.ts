@@ -32,6 +32,7 @@
 //                 Zane Hannan AU <https://github.com/ZaneHannanAU>
 //                 Jeremie Rodriguez <https://github.com/jeremiergz>
 //                 Samuel Ainsworth <https://github.com/samuela>
+//                 Kyle Uehlein <https://github.com/kuehlein>
 // Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped
 
 /** inspector module types */
@@ -1780,7 +1781,9 @@ declare module "zlib" {
     }
 
     interface Zlib {
+        /** @deprecated Use bytesWritten instead. */
         readonly bytesRead: number;
+        readonly bytesWritten: number;
         close(callback?: () => void): void;
         flush(kind?: number | (() => void), callback?: () => void): void;
     }
@@ -2886,6 +2889,7 @@ declare module "child_process" {
         gid?: number;
         windowsHide?: boolean;
         windowsVerbatimArguments?: boolean;
+        shell?: boolean | string;
     }
     interface ExecFileOptionsWithStringEncoding extends ExecFileOptions {
         encoding: BufferEncoding;

@@ -37,12 +37,32 @@ module.exports =
 /******/ 	// define getter function for harmony exports
 /******/ 	__webpack_require__.d = function(exports, name, getter) {
 /******/ 		if(!__webpack_require__.o(exports, name)) {
-/******/ 			Object.defineProperty(exports, name, {
-/******/ 				configurable: false,
-/******/ 				enumerable: true,
-/******/ 				get: getter
-/******/ 			});
+/******/ 			Object.defineProperty(exports, name, { enumerable: true, get: getter });
 /******/ 		}
+/******/ 	};
+/******/
+/******/ 	// define __esModule on exports
+/******/ 	__webpack_require__.r = function(exports) {
+/******/ 		if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
+/******/ 			Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 		}
+/******/ 		Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 	};
+/******/
+/******/ 	// create a fake namespace object
+/******/ 	// mode & 1: value is a module id, require it
+/******/ 	// mode & 2: merge all properties of value into the ns
+/******/ 	// mode & 4: return value when already ns object
+/******/ 	// mode & 8|1: behave like require
+/******/ 	__webpack_require__.t = function(value, mode) {
+/******/ 		if(mode & 1) value = __webpack_require__(value);
+/******/ 		if(mode & 8) return value;
+/******/ 		if((mode & 4) && typeof value === 'object' && value && value.__esModule) return value;
+/******/ 		var ns = Object.create(null);
+/******/ 		__webpack_require__.r(ns);
+/******/ 		Object.defineProperty(ns, 'default', { enumerable: true, value: value });
+/******/ 		if(mode & 2 && typeof value != 'string') for(var key in value) __webpack_require__.d(ns, key, function(key) { return value[key]; }.bind(null, key));
+/******/ 		return ns;
 /******/ 	};
 /******/
 /******/ 	// getDefaultExport function for compatibility with non-harmony modules
@@ -60,48 +80,43 @@ module.exports =
 /******/ 	// __webpack_public_path__
 /******/ 	__webpack_require__.p = "/dist/";
 /******/
+/******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 155);
+/******/ 	return __webpack_require__(__webpack_require__.s = 99);
 /******/ })
 /************************************************************************/
 /******/ ({
 
 /***/ 0:
-/***/ (function(module, exports) {
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return normalizeComponent; });
 /* globals __VUE_SSR_CONTEXT__ */
 
-// IMPORTANT: Do NOT use ES2015 features in this file.
+// IMPORTANT: Do NOT use ES2015 features in this file (except for modules).
 // This module is a runtime utility for cleaner component module output and will
 // be included in the final webpack user bundle.
 
-module.exports = function normalizeComponent (
-  rawScriptExports,
-  compiledTemplate,
+function normalizeComponent (
+  scriptExports,
+  render,
+  staticRenderFns,
   functionalTemplate,
   injectStyles,
   scopeId,
-  moduleIdentifier /* server only */
+  moduleIdentifier, /* server only */
+  shadowMode /* vue-cli only */
 ) {
-  var esModule
-  var scriptExports = rawScriptExports = rawScriptExports || {}
-
-  // ES6 modules interop
-  var type = typeof rawScriptExports.default
-  if (type === 'object' || type === 'function') {
-    esModule = rawScriptExports
-    scriptExports = rawScriptExports.default
-  }
-
   // Vue.extend constructor export interop
   var options = typeof scriptExports === 'function'
     ? scriptExports.options
     : scriptExports
 
   // render functions
-  if (compiledTemplate) {
-    options.render = compiledTemplate.render
-    options.staticRenderFns = compiledTemplate.staticRenderFns
+  if (render) {
+    options.render = render
+    options.staticRenderFns = staticRenderFns
     options._compiled = true
   }
 
@@ -112,7 +127,7 @@ module.exports = function normalizeComponent (
 
   // scopedId
   if (scopeId) {
-    options._scopeId = scopeId
+    options._scopeId = 'data-v-' + scopeId
   }
 
   var hook
@@ -140,34 +155,32 @@ module.exports = function normalizeComponent (
     // never gets called
     options._ssrRegister = hook
   } else if (injectStyles) {
-    hook = injectStyles
+    hook = shadowMode
+      ? function () { injectStyles.call(this, this.$root.$options.shadowRoot) }
+      : injectStyles
   }
 
   if (hook) {
-    var functional = options.functional
-    var existing = functional
-      ? options.render
-      : options.beforeCreate
-
-    if (!functional) {
-      // inject component registration as beforeCreate hook
-      options.beforeCreate = existing
-        ? [].concat(existing, hook)
-        : [hook]
-    } else {
+    if (options.functional) {
       // for template-only hot-reload because in that case the render fn doesn't
       // go through the normalizer
       options._injectStyles = hook
       // register for functioal component in vue file
+      var originalRender = options.render
       options.render = function renderWithStyleInjection (h, context) {
         hook.call(context)
-        return existing(h, context)
+        return originalRender(h, context)
       }
+    } else {
+      // inject component registration as beforeCreate hook
+      var existing = options.beforeCreate
+      options.beforeCreate = existing
+        ? [].concat(existing, hook)
+        : [hook]
     }
   }
 
   return {
-    esModule: esModule,
     exports: scriptExports,
     options: options
   }
@@ -176,91 +189,72 @@ module.exports = function normalizeComponent (
 
 /***/ }),
 
-/***/ 155:
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-exports.__esModule = true;
-
-var _buttonGroup = __webpack_require__(156);
-
-var _buttonGroup2 = _interopRequireDefault(_buttonGroup);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-/* istanbul ignore next */
-_buttonGroup2.default.install = function (Vue) {
-  Vue.component(_buttonGroup2.default.name, _buttonGroup2.default);
-};
-
-exports.default = _buttonGroup2.default;
-
-/***/ }),
-
-/***/ 156:
+/***/ 99:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_lib_selector_type_script_index_0_button_group_vue__ = __webpack_require__(157);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_lib_selector_type_script_index_0_button_group_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_lib_selector_type_script_index_0_button_group_vue__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_0c71b59b_hasScoped_false_preserveWhitespace_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_button_group_vue__ = __webpack_require__(158);
-var normalizeComponent = __webpack_require__(0)
-/* script */
+__webpack_require__.r(__webpack_exports__);
 
-/* template */
+// CONCATENATED MODULE: ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./packages/button/src/button-group.vue?vue&type=template&id=3d8661d0&
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c("div", { staticClass: "el-button-group" }, [_vm._t("default")], 2)
+}
+var staticRenderFns = []
+render._withStripped = true
 
-/* template functional */
-  var __vue_template_functional__ = false
-/* styles */
-var __vue_styles__ = null
-/* scopeId */
-var __vue_scopeId__ = null
-/* moduleIdentifier (server only) */
-var __vue_module_identifier__ = null
-var Component = normalizeComponent(
-  __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_lib_selector_type_script_index_0_button_group_vue___default.a,
-  __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_0c71b59b_hasScoped_false_preserveWhitespace_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_button_group_vue__["a" /* default */],
-  __vue_template_functional__,
-  __vue_styles__,
-  __vue_scopeId__,
-  __vue_module_identifier__
+
+// CONCATENATED MODULE: ./packages/button/src/button-group.vue?vue&type=template&id=3d8661d0&
+
+// CONCATENATED MODULE: ./node_modules/babel-loader/lib!./node_modules/vue-loader/lib??vue-loader-options!./packages/button/src/button-group.vue?vue&type=script&lang=js&
+//
+//
+//
+//
+//
+
+/* harmony default export */ var button_groupvue_type_script_lang_js_ = ({
+  name: 'ElButtonGroup'
+});
+// CONCATENATED MODULE: ./packages/button/src/button-group.vue?vue&type=script&lang=js&
+ /* harmony default export */ var src_button_groupvue_type_script_lang_js_ = (button_groupvue_type_script_lang_js_); 
+// EXTERNAL MODULE: ./node_modules/vue-loader/lib/runtime/componentNormalizer.js
+var componentNormalizer = __webpack_require__(0);
+
+// CONCATENATED MODULE: ./packages/button/src/button-group.vue
+
+
+
+
+
+/* normalize component */
+
+var component = Object(componentNormalizer["a" /* default */])(
+  src_button_groupvue_type_script_lang_js_,
+  render,
+  staticRenderFns,
+  false,
+  null,
+  null,
+  null
+  
 )
 
-/* harmony default export */ __webpack_exports__["default"] = (Component.exports);
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "packages/button/src/button-group.vue"
+/* harmony default export */ var button_group = (component.exports);
+// CONCATENATED MODULE: ./packages/button-group/index.js
 
 
-/***/ }),
-
-/***/ 157:
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-exports.__esModule = true;
-//
-//
-//
-//
-//
-
-exports.default = {
-  name: 'ElButtonGroup'
+/* istanbul ignore next */
+button_group.install = function (Vue) {
+  Vue.component(button_group.name, button_group);
 };
 
-/***/ }),
-
-/***/ 158:
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"el-button-group"},[_vm._t("default")],2)}
-var staticRenderFns = []
-var esExports = { render: render, staticRenderFns: staticRenderFns }
-/* harmony default export */ __webpack_exports__["a"] = (esExports);
+/* harmony default export */ var packages_button_group = __webpack_exports__["default"] = (button_group);
 
 /***/ })
 

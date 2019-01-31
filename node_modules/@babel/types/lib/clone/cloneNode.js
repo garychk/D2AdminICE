@@ -37,6 +37,10 @@ function cloneNode(node, deep = true) {
   if (type === "Identifier") {
     newNode.name = node.name;
 
+    if (has(node, "optional") && typeof node.optional === "boolean") {
+      newNode.optional = node.optional;
+    }
+
     if (has(node, "typeAnnotation")) {
       newNode.typeAnnotation = deep ? cloneIfNodeOrArray(node.typeAnnotation, true) : node.typeAnnotation;
     }

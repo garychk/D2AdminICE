@@ -37,12 +37,32 @@ module.exports =
 /******/ 	// define getter function for harmony exports
 /******/ 	__webpack_require__.d = function(exports, name, getter) {
 /******/ 		if(!__webpack_require__.o(exports, name)) {
-/******/ 			Object.defineProperty(exports, name, {
-/******/ 				configurable: false,
-/******/ 				enumerable: true,
-/******/ 				get: getter
-/******/ 			});
+/******/ 			Object.defineProperty(exports, name, { enumerable: true, get: getter });
 /******/ 		}
+/******/ 	};
+/******/
+/******/ 	// define __esModule on exports
+/******/ 	__webpack_require__.r = function(exports) {
+/******/ 		if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
+/******/ 			Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 		}
+/******/ 		Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 	};
+/******/
+/******/ 	// create a fake namespace object
+/******/ 	// mode & 1: value is a module id, require it
+/******/ 	// mode & 2: merge all properties of value into the ns
+/******/ 	// mode & 4: return value when already ns object
+/******/ 	// mode & 8|1: behave like require
+/******/ 	__webpack_require__.t = function(value, mode) {
+/******/ 		if(mode & 1) value = __webpack_require__(value);
+/******/ 		if(mode & 8) return value;
+/******/ 		if((mode & 4) && typeof value === 'object' && value && value.__esModule) return value;
+/******/ 		var ns = Object.create(null);
+/******/ 		__webpack_require__.r(ns);
+/******/ 		Object.defineProperty(ns, 'default', { enumerable: true, value: value });
+/******/ 		if(mode & 2 && typeof value != 'string') for(var key in value) __webpack_require__.d(ns, key, function(key) { return value[key]; }.bind(null, key));
+/******/ 		return ns;
 /******/ 	};
 /******/
 /******/ 	// getDefaultExport function for compatibility with non-harmony modules
@@ -60,48 +80,43 @@ module.exports =
 /******/ 	// __webpack_public_path__
 /******/ 	__webpack_require__.p = "/dist/";
 /******/
+/******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 72);
+/******/ 	return __webpack_require__(__webpack_require__.s = 110);
 /******/ })
 /************************************************************************/
 /******/ ({
 
 /***/ 0:
-/***/ (function(module, exports) {
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return normalizeComponent; });
 /* globals __VUE_SSR_CONTEXT__ */
 
-// IMPORTANT: Do NOT use ES2015 features in this file.
+// IMPORTANT: Do NOT use ES2015 features in this file (except for modules).
 // This module is a runtime utility for cleaner component module output and will
 // be included in the final webpack user bundle.
 
-module.exports = function normalizeComponent (
-  rawScriptExports,
-  compiledTemplate,
+function normalizeComponent (
+  scriptExports,
+  render,
+  staticRenderFns,
   functionalTemplate,
   injectStyles,
   scopeId,
-  moduleIdentifier /* server only */
+  moduleIdentifier, /* server only */
+  shadowMode /* vue-cli only */
 ) {
-  var esModule
-  var scriptExports = rawScriptExports = rawScriptExports || {}
-
-  // ES6 modules interop
-  var type = typeof rawScriptExports.default
-  if (type === 'object' || type === 'function') {
-    esModule = rawScriptExports
-    scriptExports = rawScriptExports.default
-  }
-
   // Vue.extend constructor export interop
   var options = typeof scriptExports === 'function'
     ? scriptExports.options
     : scriptExports
 
   // render functions
-  if (compiledTemplate) {
-    options.render = compiledTemplate.render
-    options.staticRenderFns = compiledTemplate.staticRenderFns
+  if (render) {
+    options.render = render
+    options.staticRenderFns = staticRenderFns
     options._compiled = true
   }
 
@@ -112,7 +127,7 @@ module.exports = function normalizeComponent (
 
   // scopedId
   if (scopeId) {
-    options._scopeId = scopeId
+    options._scopeId = 'data-v-' + scopeId
   }
 
   var hook
@@ -140,34 +155,32 @@ module.exports = function normalizeComponent (
     // never gets called
     options._ssrRegister = hook
   } else if (injectStyles) {
-    hook = injectStyles
+    hook = shadowMode
+      ? function () { injectStyles.call(this, this.$root.$options.shadowRoot) }
+      : injectStyles
   }
 
   if (hook) {
-    var functional = options.functional
-    var existing = functional
-      ? options.render
-      : options.beforeCreate
-
-    if (!functional) {
-      // inject component registration as beforeCreate hook
-      options.beforeCreate = existing
-        ? [].concat(existing, hook)
-        : [hook]
-    } else {
+    if (options.functional) {
       // for template-only hot-reload because in that case the render fn doesn't
       // go through the normalizer
       options._injectStyles = hook
       // register for functioal component in vue file
+      var originalRender = options.render
       options.render = function renderWithStyleInjection (h, context) {
         hook.call(context)
-        return existing(h, context)
+        return originalRender(h, context)
       }
+    } else {
+      // inject component registration as beforeCreate hook
+      var existing = options.beforeCreate
+      options.beforeCreate = existing
+        ? [].concat(existing, hook)
+        : [hook]
     }
   }
 
   return {
-    esModule: esModule,
     exports: scriptExports,
     options: options
   }
@@ -176,135 +189,70 @@ module.exports = function normalizeComponent (
 
 /***/ }),
 
-/***/ 1:
+/***/ 10:
 /***/ (function(module, exports) {
 
-module.exports = require("element-ui/lib/mixins/emitter");
+module.exports = require("element-ui/lib/mixins/migrating");
 
 /***/ }),
 
-/***/ 10:
+/***/ 11:
 /***/ (function(module, exports) {
 
 module.exports = require("element-ui/lib/utils/clickoutside");
 
 /***/ }),
 
-/***/ 15:
-/***/ (function(module, exports) {
-
-module.exports = require("element-ui/lib/button");
-
-/***/ }),
-
-/***/ 2:
-/***/ (function(module, exports) {
-
-module.exports = require("element-ui/lib/utils/util");
-
-/***/ }),
-
-/***/ 72:
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-exports.__esModule = true;
-
-var _dropdown = __webpack_require__(73);
-
-var _dropdown2 = _interopRequireDefault(_dropdown);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-/* istanbul ignore next */
-_dropdown2.default.install = function (Vue) {
-  Vue.component(_dropdown2.default.name, _dropdown2.default);
-};
-
-exports.default = _dropdown2.default;
-
-/***/ }),
-
-/***/ 73:
+/***/ 110:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_lib_selector_type_script_index_0_dropdown_vue__ = __webpack_require__(74);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_lib_selector_type_script_index_0_dropdown_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_lib_selector_type_script_index_0_dropdown_vue__);
-var normalizeComponent = __webpack_require__(0)
-/* script */
+__webpack_require__.r(__webpack_exports__);
 
-/* template */
-var __vue_template__ = null
-/* template functional */
-  var __vue_template_functional__ = false
-/* styles */
-var __vue_styles__ = null
-/* scopeId */
-var __vue_scopeId__ = null
-/* moduleIdentifier (server only) */
-var __vue_module_identifier__ = null
-var Component = normalizeComponent(
-  __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_lib_selector_type_script_index_0_dropdown_vue___default.a,
-  __vue_template__,
-  __vue_template_functional__,
-  __vue_styles__,
-  __vue_scopeId__,
-  __vue_module_identifier__
-)
+// EXTERNAL MODULE: external "element-ui/lib/utils/clickoutside"
+var clickoutside_ = __webpack_require__(11);
+var clickoutside_default = /*#__PURE__*/__webpack_require__.n(clickoutside_);
 
-/* harmony default export */ __webpack_exports__["default"] = (Component.exports);
+// EXTERNAL MODULE: external "element-ui/lib/mixins/emitter"
+var emitter_ = __webpack_require__(3);
+var emitter_default = /*#__PURE__*/__webpack_require__.n(emitter_);
 
+// EXTERNAL MODULE: external "element-ui/lib/mixins/migrating"
+var migrating_ = __webpack_require__(10);
+var migrating_default = /*#__PURE__*/__webpack_require__.n(migrating_);
 
-/***/ }),
+// EXTERNAL MODULE: external "element-ui/lib/button"
+var button_ = __webpack_require__(18);
+var button_default = /*#__PURE__*/__webpack_require__.n(button_);
 
-/***/ 74:
-/***/ (function(module, exports, __webpack_require__) {
+// EXTERNAL MODULE: external "element-ui/lib/button-group"
+var button_group_ = __webpack_require__(41);
+var button_group_default = /*#__PURE__*/__webpack_require__.n(button_group_);
 
-"use strict";
+// EXTERNAL MODULE: external "element-ui/lib/utils/util"
+var util_ = __webpack_require__(4);
+
+// CONCATENATED MODULE: ./node_modules/babel-loader/lib!./node_modules/vue-loader/lib??vue-loader-options!./packages/dropdown/src/dropdown.vue?vue&type=script&lang=js&
 
 
-exports.__esModule = true;
 
-var _clickoutside = __webpack_require__(10);
 
-var _clickoutside2 = _interopRequireDefault(_clickoutside);
 
-var _emitter = __webpack_require__(1);
 
-var _emitter2 = _interopRequireDefault(_emitter);
 
-var _migrating = __webpack_require__(8);
 
-var _migrating2 = _interopRequireDefault(_migrating);
-
-var _button = __webpack_require__(15);
-
-var _button2 = _interopRequireDefault(_button);
-
-var _buttonGroup = __webpack_require__(75);
-
-var _buttonGroup2 = _interopRequireDefault(_buttonGroup);
-
-var _util = __webpack_require__(2);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-exports.default = {
+/* harmony default export */ var dropdownvue_type_script_lang_js_ = ({
   name: 'ElDropdown',
 
   componentName: 'ElDropdown',
 
-  mixins: [_emitter2.default, _migrating2.default],
+  mixins: [emitter_default.a, migrating_default.a],
 
-  directives: { Clickoutside: _clickoutside2.default },
+  directives: { Clickoutside: clickoutside_default.a },
 
   components: {
-    ElButton: _button2.default,
-    ElButtonGroup: _buttonGroup2.default
+    ElButton: button_default.a,
+    ElButtonGroup: button_group_default.a
   },
 
   provide: function provide() {
@@ -355,7 +303,7 @@ exports.default = {
       menuItemsArray: null,
       dropdownElm: null,
       focusing: false,
-      listId: 'dropdown-menu-' + (0, _util.generateId)()
+      listId: 'dropdown-menu-' + Object(util_["generateId"])()
     };
   },
 
@@ -568,29 +516,21 @@ exports.default = {
       hide();
     };
 
-    var triggerElm = !splitButton ? this.$slots.default : h(
-      'el-button-group',
-      null,
-      [h(
-        'el-button',
-        {
-          attrs: { type: type, size: dropdownSize },
-          nativeOn: {
-            'click': handleMainButtonClick
-          }
-        },
-        [this.$slots.default]
-      ), h(
-        'el-button',
-        { ref: 'trigger', attrs: { type: type, size: dropdownSize },
-          'class': 'el-dropdown__caret-button' },
-        [h(
-          'i',
-          { 'class': 'el-dropdown__icon el-icon-arrow-down' },
-          []
-        )]
-      )]
-    );
+    var triggerElm = !splitButton ? this.$slots.default : h('el-button-group', [h(
+      'el-button',
+      {
+        attrs: { type: type, size: dropdownSize },
+        nativeOn: {
+          'click': handleMainButtonClick
+        }
+      },
+      [this.$slots.default]
+    ), h(
+      'el-button',
+      { ref: 'trigger', attrs: { type: type, size: dropdownSize },
+        'class': 'el-dropdown__caret-button' },
+      [h('i', { 'class': 'el-dropdown__icon el-icon-arrow-down' })]
+    )]);
 
     return h(
       'div',
@@ -602,21 +542,72 @@ exports.default = {
       [triggerElm, this.$slots.dropdown]
     );
   }
+});
+// CONCATENATED MODULE: ./packages/dropdown/src/dropdown.vue?vue&type=script&lang=js&
+ /* harmony default export */ var src_dropdownvue_type_script_lang_js_ = (dropdownvue_type_script_lang_js_); 
+// EXTERNAL MODULE: ./node_modules/vue-loader/lib/runtime/componentNormalizer.js
+var componentNormalizer = __webpack_require__(0);
+
+// CONCATENATED MODULE: ./packages/dropdown/src/dropdown.vue
+var render, staticRenderFns
+
+
+
+
+/* normalize component */
+
+var component = Object(componentNormalizer["a" /* default */])(
+  src_dropdownvue_type_script_lang_js_,
+  render,
+  staticRenderFns,
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "packages/dropdown/src/dropdown.vue"
+/* harmony default export */ var dropdown = (component.exports);
+// CONCATENATED MODULE: ./packages/dropdown/index.js
+
+
+/* istanbul ignore next */
+dropdown.install = function (Vue) {
+  Vue.component(dropdown.name, dropdown);
 };
+
+/* harmony default export */ var packages_dropdown = __webpack_exports__["default"] = (dropdown);
 
 /***/ }),
 
-/***/ 75:
+/***/ 18:
+/***/ (function(module, exports) {
+
+module.exports = require("element-ui/lib/button");
+
+/***/ }),
+
+/***/ 3:
+/***/ (function(module, exports) {
+
+module.exports = require("element-ui/lib/mixins/emitter");
+
+/***/ }),
+
+/***/ 4:
+/***/ (function(module, exports) {
+
+module.exports = require("element-ui/lib/utils/util");
+
+/***/ }),
+
+/***/ 41:
 /***/ (function(module, exports) {
 
 module.exports = require("element-ui/lib/button-group");
-
-/***/ }),
-
-/***/ 8:
-/***/ (function(module, exports) {
-
-module.exports = require("element-ui/lib/mixins/migrating");
 
 /***/ })
 

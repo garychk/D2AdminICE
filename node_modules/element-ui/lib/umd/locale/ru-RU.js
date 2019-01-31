@@ -50,7 +50,7 @@
         month10: 'Октябрь',
         month11: 'Ноябрь',
         month12: 'Декабрь',
-        // week: 'week',
+        week: 'неделя',
         weeks: {
           sun: 'Вс',
           mon: 'Пн',

@@ -37,12 +37,32 @@ module.exports =
 /******/ 	// define getter function for harmony exports
 /******/ 	__webpack_require__.d = function(exports, name, getter) {
 /******/ 		if(!__webpack_require__.o(exports, name)) {
-/******/ 			Object.defineProperty(exports, name, {
-/******/ 				configurable: false,
-/******/ 				enumerable: true,
-/******/ 				get: getter
-/******/ 			});
+/******/ 			Object.defineProperty(exports, name, { enumerable: true, get: getter });
 /******/ 		}
+/******/ 	};
+/******/
+/******/ 	// define __esModule on exports
+/******/ 	__webpack_require__.r = function(exports) {
+/******/ 		if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
+/******/ 			Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 		}
+/******/ 		Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 	};
+/******/
+/******/ 	// create a fake namespace object
+/******/ 	// mode & 1: value is a module id, require it
+/******/ 	// mode & 2: merge all properties of value into the ns
+/******/ 	// mode & 4: return value when already ns object
+/******/ 	// mode & 8|1: behave like require
+/******/ 	__webpack_require__.t = function(value, mode) {
+/******/ 		if(mode & 1) value = __webpack_require__(value);
+/******/ 		if(mode & 8) return value;
+/******/ 		if((mode & 4) && typeof value === 'object' && value && value.__esModule) return value;
+/******/ 		var ns = Object.create(null);
+/******/ 		__webpack_require__.r(ns);
+/******/ 		Object.defineProperty(ns, 'default', { enumerable: true, value: value });
+/******/ 		if(mode & 2 && typeof value != 'string') for(var key in value) __webpack_require__.d(ns, key, function(key) { return value[key]; }.bind(null, key));
+/******/ 		return ns;
 /******/ 	};
 /******/
 /******/ 	// getDefaultExport function for compatibility with non-harmony modules
@@ -60,48 +80,43 @@ module.exports =
 /******/ 	// __webpack_public_path__
 /******/ 	__webpack_require__.p = "/dist/";
 /******/
+/******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 84);
+/******/ 	return __webpack_require__(__webpack_require__.s = 58);
 /******/ })
 /************************************************************************/
 /******/ ({
 
 /***/ 0:
-/***/ (function(module, exports) {
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return normalizeComponent; });
 /* globals __VUE_SSR_CONTEXT__ */
 
-// IMPORTANT: Do NOT use ES2015 features in this file.
+// IMPORTANT: Do NOT use ES2015 features in this file (except for modules).
 // This module is a runtime utility for cleaner component module output and will
 // be included in the final webpack user bundle.
 
-module.exports = function normalizeComponent (
-  rawScriptExports,
-  compiledTemplate,
+function normalizeComponent (
+  scriptExports,
+  render,
+  staticRenderFns,
   functionalTemplate,
   injectStyles,
   scopeId,
-  moduleIdentifier /* server only */
+  moduleIdentifier, /* server only */
+  shadowMode /* vue-cli only */
 ) {
-  var esModule
-  var scriptExports = rawScriptExports = rawScriptExports || {}
-
-  // ES6 modules interop
-  var type = typeof rawScriptExports.default
-  if (type === 'object' || type === 'function') {
-    esModule = rawScriptExports
-    scriptExports = rawScriptExports.default
-  }
-
   // Vue.extend constructor export interop
   var options = typeof scriptExports === 'function'
     ? scriptExports.options
     : scriptExports
 
   // render functions
-  if (compiledTemplate) {
-    options.render = compiledTemplate.render
-    options.staticRenderFns = compiledTemplate.staticRenderFns
+  if (render) {
+    options.render = render
+    options.staticRenderFns = staticRenderFns
     options._compiled = true
   }
 
@@ -112,7 +127,7 @@ module.exports = function normalizeComponent (
 
   // scopedId
   if (scopeId) {
-    options._scopeId = scopeId
+    options._scopeId = 'data-v-' + scopeId
   }
 
   var hook
@@ -140,34 +155,32 @@ module.exports = function normalizeComponent (
     // never gets called
     options._ssrRegister = hook
   } else if (injectStyles) {
-    hook = injectStyles
+    hook = shadowMode
+      ? function () { injectStyles.call(this, this.$root.$options.shadowRoot) }
+      : injectStyles
   }
 
   if (hook) {
-    var functional = options.functional
-    var existing = functional
-      ? options.render
-      : options.beforeCreate
-
-    if (!functional) {
-      // inject component registration as beforeCreate hook
-      options.beforeCreate = existing
-        ? [].concat(existing, hook)
-        : [hook]
-    } else {
+    if (options.functional) {
       // for template-only hot-reload because in that case the render fn doesn't
       // go through the normalizer
       options._injectStyles = hook
       // register for functioal component in vue file
+      var originalRender = options.render
       options.render = function renderWithStyleInjection (h, context) {
         hook.call(context)
-        return existing(h, context)
+        return originalRender(h, context)
       }
+    } else {
+      // inject component registration as beforeCreate hook
+      var existing = options.beforeCreate
+      options.beforeCreate = existing
+        ? [].concat(existing, hook)
+        : [hook]
     }
   }
 
   return {
-    esModule: esModule,
     exports: scriptExports,
     options: options
   }
@@ -176,27 +189,42 @@ module.exports = function normalizeComponent (
 
 /***/ }),
 
-/***/ 1:
+/***/ 10:
 /***/ (function(module, exports) {
 
-module.exports = require("element-ui/lib/mixins/emitter");
+module.exports = require("element-ui/lib/mixins/migrating");
 
 /***/ }),
 
-/***/ 3:
+/***/ 2:
 /***/ (function(module, exports) {
 
 module.exports = require("element-ui/lib/utils/dom");
 
 /***/ }),
 
-/***/ 47:
-/***/ (function(module, exports, __webpack_require__) {
+/***/ 3:
+/***/ (function(module, exports) {
+
+module.exports = require("element-ui/lib/mixins/emitter");
+
+/***/ }),
+
+/***/ 58:
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+__webpack_require__.r(__webpack_exports__);
 
+// EXTERNAL MODULE: external "element-ui/lib/mixins/emitter"
+var emitter_ = __webpack_require__(3);
+var emitter_default = /*#__PURE__*/__webpack_require__.n(emitter_);
 
-exports.__esModule = true;
+// EXTERNAL MODULE: external "element-ui/lib/mixins/migrating"
+var migrating_ = __webpack_require__(10);
+var migrating_default = /*#__PURE__*/__webpack_require__.n(migrating_);
+
+// CONCATENATED MODULE: ./src/utils/aria-utils.js
 var aria = aria || {};
 
 aria.Utils = aria.Utils || {};
@@ -318,99 +346,149 @@ aria.Utils.keys = {
   down: 40
 };
 
-exports.default = aria.Utils;
-
-/***/ }),
-
-/***/ 8:
-/***/ (function(module, exports) {
-
-module.exports = require("element-ui/lib/mixins/migrating");
-
-/***/ }),
-
-/***/ 84:
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
+/* harmony default export */ var aria_utils = (aria.Utils);
+// CONCATENATED MODULE: ./src/utils/menu/aria-submenu.js
 
 
-exports.__esModule = true;
-
-var _menu = __webpack_require__(85);
-
-var _menu2 = _interopRequireDefault(_menu);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-/* istanbul ignore next */
-_menu2.default.install = function (Vue) {
-  Vue.component(_menu2.default.name, _menu2.default);
+var SubMenu = function SubMenu(parent, domNode) {
+  this.domNode = domNode;
+  this.parent = parent;
+  this.subMenuItems = [];
+  this.subIndex = 0;
+  this.init();
 };
 
-exports.default = _menu2.default;
+SubMenu.prototype.init = function () {
+  this.subMenuItems = this.domNode.querySelectorAll('li');
+  this.addListeners();
+};
 
-/***/ }),
+SubMenu.prototype.gotoSubIndex = function (idx) {
+  if (idx === this.subMenuItems.length) {
+    idx = 0;
+  } else if (idx < 0) {
+    idx = this.subMenuItems.length - 1;
+  }
+  this.subMenuItems[idx].focus();
+  this.subIndex = idx;
+};
 
-/***/ 85:
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+SubMenu.prototype.addListeners = function () {
+  var _this = this;
 
-"use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_lib_selector_type_script_index_0_menu_vue__ = __webpack_require__(86);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_lib_selector_type_script_index_0_menu_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_lib_selector_type_script_index_0_menu_vue__);
-var normalizeComponent = __webpack_require__(0)
-/* script */
+  var keys = aria_utils.keys;
+  var parentNode = this.parent.domNode;
+  Array.prototype.forEach.call(this.subMenuItems, function (el) {
+    el.addEventListener('keydown', function (event) {
+      var prevDef = false;
+      switch (event.keyCode) {
+        case keys.down:
+          _this.gotoSubIndex(_this.subIndex + 1);
+          prevDef = true;
+          break;
+        case keys.up:
+          _this.gotoSubIndex(_this.subIndex - 1);
+          prevDef = true;
+          break;
+        case keys.tab:
+          aria_utils.triggerEvent(parentNode, 'mouseleave');
+          break;
+        case keys.enter:
+        case keys.space:
+          prevDef = true;
+          event.currentTarget.click();
+          break;
+      }
+      if (prevDef) {
+        event.preventDefault();
+        event.stopPropagation();
+      }
+      return false;
+    });
+  });
+};
 
-/* template */
-var __vue_template__ = null
-/* template functional */
-  var __vue_template_functional__ = false
-/* styles */
-var __vue_styles__ = null
-/* scopeId */
-var __vue_scopeId__ = null
-/* moduleIdentifier (server only) */
-var __vue_module_identifier__ = null
-var Component = normalizeComponent(
-  __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_lib_selector_type_script_index_0_menu_vue___default.a,
-  __vue_template__,
-  __vue_template_functional__,
-  __vue_styles__,
-  __vue_scopeId__,
-  __vue_module_identifier__
-)
-
-/* harmony default export */ __webpack_exports__["default"] = (Component.exports);
+/* harmony default export */ var aria_submenu = (SubMenu);
+// CONCATENATED MODULE: ./src/utils/menu/aria-menuitem.js
 
 
-/***/ }),
 
-/***/ 86:
-/***/ (function(module, exports, __webpack_require__) {
+var MenuItem = function MenuItem(domNode) {
+  this.domNode = domNode;
+  this.submenu = null;
+  this.init();
+};
 
-"use strict";
+MenuItem.prototype.init = function () {
+  this.domNode.setAttribute('tabindex', '0');
+  var menuChild = this.domNode.querySelector('.el-menu');
+  if (menuChild) {
+    this.submenu = new aria_submenu(this, menuChild);
+  }
+  this.addListeners();
+};
+
+MenuItem.prototype.addListeners = function () {
+  var _this = this;
+
+  var keys = aria_utils.keys;
+  this.domNode.addEventListener('keydown', function (event) {
+    var prevDef = false;
+    switch (event.keyCode) {
+      case keys.down:
+        aria_utils.triggerEvent(event.currentTarget, 'mouseenter');
+        _this.submenu && _this.submenu.gotoSubIndex(0);
+        prevDef = true;
+        break;
+      case keys.up:
+        aria_utils.triggerEvent(event.currentTarget, 'mouseenter');
+        _this.submenu && _this.submenu.gotoSubIndex(_this.submenu.subMenuItems.length - 1);
+        prevDef = true;
+        break;
+      case keys.tab:
+        aria_utils.triggerEvent(event.currentTarget, 'mouseleave');
+        break;
+      case keys.enter:
+      case keys.space:
+        prevDef = true;
+        event.currentTarget.click();
+        break;
+    }
+    if (prevDef) {
+      event.preventDefault();
+    }
+  });
+};
+
+/* harmony default export */ var aria_menuitem = (MenuItem);
+// CONCATENATED MODULE: ./src/utils/menu/aria-menubar.js
 
 
-exports.__esModule = true;
+var Menu = function Menu(domNode) {
+  this.domNode = domNode;
+  this.init();
+};
 
-var _emitter = __webpack_require__(1);
+Menu.prototype.init = function () {
+  var menuChildren = this.domNode.childNodes;
+  [].filter.call(menuChildren, function (child) {
+    return child.nodeType === 1;
+  }).forEach(function (child) {
+    new aria_menuitem(child); // eslint-disable-line
+  });
+};
+/* harmony default export */ var aria_menubar = (Menu);
+// EXTERNAL MODULE: external "element-ui/lib/utils/dom"
+var dom_ = __webpack_require__(2);
 
-var _emitter2 = _interopRequireDefault(_emitter);
+// CONCATENATED MODULE: ./node_modules/babel-loader/lib!./node_modules/vue-loader/lib??vue-loader-options!./packages/menu/src/menu.vue?vue&type=script&lang=js&
 
-var _migrating = __webpack_require__(8);
 
-var _migrating2 = _interopRequireDefault(_migrating);
 
-var _ariaMenubar = __webpack_require__(87);
 
-var _ariaMenubar2 = _interopRequireDefault(_ariaMenubar);
 
-var _dom = __webpack_require__(3);
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-exports.default = {
+/* harmony default export */ var menuvue_type_script_lang_js_ = ({
   name: 'ElMenu',
 
   render: function render(h) {
@@ -432,11 +510,7 @@ exports.default = {
     );
 
     if (this.collapseTransition) {
-      return h(
-        'el-menu-collapse-transition',
-        null,
-        [component]
-      );
+      return h('el-menu-collapse-transition', [component]);
     } else {
       return component;
     }
@@ -445,7 +519,7 @@ exports.default = {
 
   componentName: 'ElMenu',
 
-  mixins: [_emitter2.default, _migrating2.default],
+  mixins: [emitter_default.a, migrating_default.a],
 
   provide: function provide() {
     return {
@@ -467,33 +541,33 @@ exports.default = {
               el.style.opacity = 0.2;
             },
             enter: function enter(el) {
-              (0, _dom.addClass)(el, 'el-opacity-transition');
+              Object(dom_["addClass"])(el, 'el-opacity-transition');
               el.style.opacity = 1;
             },
             afterEnter: function afterEnter(el) {
-              (0, _dom.removeClass)(el, 'el-opacity-transition');
+              Object(dom_["removeClass"])(el, 'el-opacity-transition');
               el.style.opacity = '';
             },
             beforeLeave: function beforeLeave(el) {
               if (!el.dataset) el.dataset = {};
 
-              if ((0, _dom.hasClass)(el, 'el-menu--collapse')) {
-                (0, _dom.removeClass)(el, 'el-menu--collapse');
+              if (Object(dom_["hasClass"])(el, 'el-menu--collapse')) {
+                Object(dom_["removeClass"])(el, 'el-menu--collapse');
                 el.dataset.oldOverflow = el.style.overflow;
                 el.dataset.scrollWidth = el.clientWidth;
-                (0, _dom.addClass)(el, 'el-menu--collapse');
+                Object(dom_["addClass"])(el, 'el-menu--collapse');
               } else {
-                (0, _dom.addClass)(el, 'el-menu--collapse');
+                Object(dom_["addClass"])(el, 'el-menu--collapse');
                 el.dataset.oldOverflow = el.style.overflow;
                 el.dataset.scrollWidth = el.clientWidth;
-                (0, _dom.removeClass)(el, 'el-menu--collapse');
+                Object(dom_["removeClass"])(el, 'el-menu--collapse');
               }
 
               el.style.width = el.scrollWidth + 'px';
               el.style.overflow = 'hidden';
             },
             leave: function leave(el) {
-              (0, _dom.addClass)(el, 'horizontal-collapse-transition');
+              Object(dom_["addClass"])(el, 'horizontal-collapse-transition');
               el.style.width = el.dataset.scrollWidth + 'px';
             }
           }
@@ -728,187 +802,48 @@ exports.default = {
     this.$on('item-click', this.handleItemClick);
     this.$on('submenu-click', this.handleSubmenuClick);
     if (this.mode === 'horizontal') {
-      new _ariaMenubar2.default(this.$el); // eslint-disable-line
+      new aria_menubar(this.$el); // eslint-disable-line
     }
     this.$watch('items', this.updateActiveIndex);
   }
+});
+// CONCATENATED MODULE: ./packages/menu/src/menu.vue?vue&type=script&lang=js&
+ /* harmony default export */ var src_menuvue_type_script_lang_js_ = (menuvue_type_script_lang_js_); 
+// EXTERNAL MODULE: ./node_modules/vue-loader/lib/runtime/componentNormalizer.js
+var componentNormalizer = __webpack_require__(0);
+
+// CONCATENATED MODULE: ./packages/menu/src/menu.vue
+var menu_render, staticRenderFns
+
+
+
+
+/* normalize component */
+
+var component = Object(componentNormalizer["a" /* default */])(
+  src_menuvue_type_script_lang_js_,
+  menu_render,
+  staticRenderFns,
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "packages/menu/src/menu.vue"
+/* harmony default export */ var menu = (component.exports);
+// CONCATENATED MODULE: ./packages/menu/index.js
+
+
+/* istanbul ignore next */
+menu.install = function (Vue) {
+  Vue.component(menu.name, menu);
 };
 
-/***/ }),
-
-/***/ 87:
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-exports.__esModule = true;
-
-var _ariaMenuitem = __webpack_require__(88);
-
-var _ariaMenuitem2 = _interopRequireDefault(_ariaMenuitem);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var Menu = function Menu(domNode) {
-  this.domNode = domNode;
-  this.init();
-};
-
-Menu.prototype.init = function () {
-  var menuChildren = this.domNode.childNodes;
-  [].filter.call(menuChildren, function (child) {
-    return child.nodeType === 1;
-  }).forEach(function (child) {
-    new _ariaMenuitem2.default(child); // eslint-disable-line
-  });
-};
-exports.default = Menu;
-
-/***/ }),
-
-/***/ 88:
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-exports.__esModule = true;
-
-var _ariaUtils = __webpack_require__(47);
-
-var _ariaUtils2 = _interopRequireDefault(_ariaUtils);
-
-var _ariaSubmenu = __webpack_require__(89);
-
-var _ariaSubmenu2 = _interopRequireDefault(_ariaSubmenu);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var MenuItem = function MenuItem(domNode) {
-  this.domNode = domNode;
-  this.submenu = null;
-  this.init();
-};
-
-MenuItem.prototype.init = function () {
-  this.domNode.setAttribute('tabindex', '0');
-  var menuChild = this.domNode.querySelector('.el-menu');
-  if (menuChild) {
-    this.submenu = new _ariaSubmenu2.default(this, menuChild);
-  }
-  this.addListeners();
-};
-
-MenuItem.prototype.addListeners = function () {
-  var _this = this;
-
-  var keys = _ariaUtils2.default.keys;
-  this.domNode.addEventListener('keydown', function (event) {
-    var prevDef = false;
-    switch (event.keyCode) {
-      case keys.down:
-        _ariaUtils2.default.triggerEvent(event.currentTarget, 'mouseenter');
-        _this.submenu && _this.submenu.gotoSubIndex(0);
-        prevDef = true;
-        break;
-      case keys.up:
-        _ariaUtils2.default.triggerEvent(event.currentTarget, 'mouseenter');
-        _this.submenu && _this.submenu.gotoSubIndex(_this.submenu.subMenuItems.length - 1);
-        prevDef = true;
-        break;
-      case keys.tab:
-        _ariaUtils2.default.triggerEvent(event.currentTarget, 'mouseleave');
-        break;
-      case keys.enter:
-      case keys.space:
-        prevDef = true;
-        event.currentTarget.click();
-        break;
-    }
-    if (prevDef) {
-      event.preventDefault();
-    }
-  });
-};
-
-exports.default = MenuItem;
-
-/***/ }),
-
-/***/ 89:
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-exports.__esModule = true;
-
-var _ariaUtils = __webpack_require__(47);
-
-var _ariaUtils2 = _interopRequireDefault(_ariaUtils);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var SubMenu = function SubMenu(parent, domNode) {
-  this.domNode = domNode;
-  this.parent = parent;
-  this.subMenuItems = [];
-  this.subIndex = 0;
-  this.init();
-};
-
-SubMenu.prototype.init = function () {
-  this.subMenuItems = this.domNode.querySelectorAll('li');
-  this.addListeners();
-};
-
-SubMenu.prototype.gotoSubIndex = function (idx) {
-  if (idx === this.subMenuItems.length) {
-    idx = 0;
-  } else if (idx < 0) {
-    idx = this.subMenuItems.length - 1;
-  }
-  this.subMenuItems[idx].focus();
-  this.subIndex = idx;
-};
-
-SubMenu.prototype.addListeners = function () {
-  var _this = this;
-
-  var keys = _ariaUtils2.default.keys;
-  var parentNode = this.parent.domNode;
-  Array.prototype.forEach.call(this.subMenuItems, function (el) {
-    el.addEventListener('keydown', function (event) {
-      var prevDef = false;
-      switch (event.keyCode) {
-        case keys.down:
-          _this.gotoSubIndex(_this.subIndex + 1);
-          prevDef = true;
-          break;
-        case keys.up:
-          _this.gotoSubIndex(_this.subIndex - 1);
-          prevDef = true;
-          break;
-        case keys.tab:
-          _ariaUtils2.default.triggerEvent(parentNode, 'mouseleave');
-          break;
-        case keys.enter:
-        case keys.space:
-          prevDef = true;
-          event.currentTarget.click();
-          break;
-      }
-      if (prevDef) {
-        event.preventDefault();
-        event.stopPropagation();
-      }
-      return false;
-    });
-  });
-};
-
-exports.default = SubMenu;
+/* harmony default export */ var packages_menu = __webpack_exports__["default"] = (menu);
 
 /***/ })
 

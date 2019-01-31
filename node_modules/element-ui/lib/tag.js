@@ -37,12 +37,32 @@ module.exports =
 /******/ 	// define getter function for harmony exports
 /******/ 	__webpack_require__.d = function(exports, name, getter) {
 /******/ 		if(!__webpack_require__.o(exports, name)) {
-/******/ 			Object.defineProperty(exports, name, {
-/******/ 				configurable: false,
-/******/ 				enumerable: true,
-/******/ 				get: getter
-/******/ 			});
+/******/ 			Object.defineProperty(exports, name, { enumerable: true, get: getter });
 /******/ 		}
+/******/ 	};
+/******/
+/******/ 	// define __esModule on exports
+/******/ 	__webpack_require__.r = function(exports) {
+/******/ 		if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
+/******/ 			Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 		}
+/******/ 		Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 	};
+/******/
+/******/ 	// create a fake namespace object
+/******/ 	// mode & 1: value is a module id, require it
+/******/ 	// mode & 2: merge all properties of value into the ns
+/******/ 	// mode & 4: return value when already ns object
+/******/ 	// mode & 8|1: behave like require
+/******/ 	__webpack_require__.t = function(value, mode) {
+/******/ 		if(mode & 1) value = __webpack_require__(value);
+/******/ 		if(mode & 8) return value;
+/******/ 		if((mode & 4) && typeof value === 'object' && value && value.__esModule) return value;
+/******/ 		var ns = Object.create(null);
+/******/ 		__webpack_require__.r(ns);
+/******/ 		Object.defineProperty(ns, 'default', { enumerable: true, value: value });
+/******/ 		if(mode & 2 && typeof value != 'string') for(var key in value) __webpack_require__.d(ns, key, function(key) { return value[key]; }.bind(null, key));
+/******/ 		return ns;
 /******/ 	};
 /******/
 /******/ 	// getDefaultExport function for compatibility with non-harmony modules
@@ -60,48 +80,43 @@ module.exports =
 /******/ 	// __webpack_public_path__
 /******/ 	__webpack_require__.p = "/dist/";
 /******/
+/******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 244);
+/******/ 	return __webpack_require__(__webpack_require__.s = 107);
 /******/ })
 /************************************************************************/
 /******/ ({
 
 /***/ 0:
-/***/ (function(module, exports) {
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return normalizeComponent; });
 /* globals __VUE_SSR_CONTEXT__ */
 
-// IMPORTANT: Do NOT use ES2015 features in this file.
+// IMPORTANT: Do NOT use ES2015 features in this file (except for modules).
 // This module is a runtime utility for cleaner component module output and will
 // be included in the final webpack user bundle.
 
-module.exports = function normalizeComponent (
-  rawScriptExports,
-  compiledTemplate,
+function normalizeComponent (
+  scriptExports,
+  render,
+  staticRenderFns,
   functionalTemplate,
   injectStyles,
   scopeId,
-  moduleIdentifier /* server only */
+  moduleIdentifier, /* server only */
+  shadowMode /* vue-cli only */
 ) {
-  var esModule
-  var scriptExports = rawScriptExports = rawScriptExports || {}
-
-  // ES6 modules interop
-  var type = typeof rawScriptExports.default
-  if (type === 'object' || type === 'function') {
-    esModule = rawScriptExports
-    scriptExports = rawScriptExports.default
-  }
-
   // Vue.extend constructor export interop
   var options = typeof scriptExports === 'function'
     ? scriptExports.options
     : scriptExports
 
   // render functions
-  if (compiledTemplate) {
-    options.render = compiledTemplate.render
-    options.staticRenderFns = compiledTemplate.staticRenderFns
+  if (render) {
+    options.render = render
+    options.staticRenderFns = staticRenderFns
     options._compiled = true
   }
 
@@ -112,7 +127,7 @@ module.exports = function normalizeComponent (
 
   // scopedId
   if (scopeId) {
-    options._scopeId = scopeId
+    options._scopeId = 'data-v-' + scopeId
   }
 
   var hook
@@ -140,34 +155,32 @@ module.exports = function normalizeComponent (
     // never gets called
     options._ssrRegister = hook
   } else if (injectStyles) {
-    hook = injectStyles
+    hook = shadowMode
+      ? function () { injectStyles.call(this, this.$root.$options.shadowRoot) }
+      : injectStyles
   }
 
   if (hook) {
-    var functional = options.functional
-    var existing = functional
-      ? options.render
-      : options.beforeCreate
-
-    if (!functional) {
-      // inject component registration as beforeCreate hook
-      options.beforeCreate = existing
-        ? [].concat(existing, hook)
-        : [hook]
-    } else {
+    if (options.functional) {
       // for template-only hot-reload because in that case the render fn doesn't
       // go through the normalizer
       options._injectStyles = hook
       // register for functioal component in vue file
+      var originalRender = options.render
       options.render = function renderWithStyleInjection (h, context) {
         hook.call(context)
-        return existing(h, context)
+        return originalRender(h, context)
       }
+    } else {
+      // inject component registration as beforeCreate hook
+      var existing = options.beforeCreate
+      options.beforeCreate = existing
+        ? [].concat(existing, hook)
+        : [hook]
     }
   }
 
   return {
-    esModule: esModule,
     exports: scriptExports,
     options: options
   }
@@ -176,71 +189,15 @@ module.exports = function normalizeComponent (
 
 /***/ }),
 
-/***/ 244:
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-exports.__esModule = true;
-
-var _tag = __webpack_require__(245);
-
-var _tag2 = _interopRequireDefault(_tag);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-/* istanbul ignore next */
-_tag2.default.install = function (Vue) {
-  Vue.component(_tag2.default.name, _tag2.default);
-};
-
-exports.default = _tag2.default;
-
-/***/ }),
-
-/***/ 245:
+/***/ 107:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_lib_selector_type_script_index_0_tag_vue__ = __webpack_require__(246);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_lib_selector_type_script_index_0_tag_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_lib_selector_type_script_index_0_tag_vue__);
-var normalizeComponent = __webpack_require__(0)
-/* script */
+__webpack_require__.r(__webpack_exports__);
 
-/* template */
-var __vue_template__ = null
-/* template functional */
-  var __vue_template_functional__ = false
-/* styles */
-var __vue_styles__ = null
-/* scopeId */
-var __vue_scopeId__ = null
-/* moduleIdentifier (server only) */
-var __vue_module_identifier__ = null
-var Component = normalizeComponent(
-  __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_lib_selector_type_script_index_0_tag_vue___default.a,
-  __vue_template__,
-  __vue_template_functional__,
-  __vue_styles__,
-  __vue_scopeId__,
-  __vue_module_identifier__
-)
+// CONCATENATED MODULE: ./node_modules/babel-loader/lib!./node_modules/vue-loader/lib??vue-loader-options!./packages/tag/src/tag.vue?vue&type=script&lang=js&
 
-/* harmony default export */ __webpack_exports__["default"] = (Component.exports);
-
-
-/***/ }),
-
-/***/ 246:
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-exports.__esModule = true;
-exports.default = {
+/* harmony default export */ var tagvue_type_script_lang_js_ = ({
   name: 'ElTag',
   props: {
     text: String,
@@ -255,6 +212,10 @@ exports.default = {
     handleClose: function handleClose(event) {
       event.stopPropagation();
       this.$emit('close', event);
+    },
+    handleClick: function handleClick(event) {
+      event.stopPropagation();
+      this.$emit('click', event);
     }
   },
   computed: {
@@ -266,15 +227,14 @@ exports.default = {
     var classes = ['el-tag', this.type ? 'el-tag--' + this.type : '', this.tagSize ? 'el-tag--' + this.tagSize : '', { 'is-hit': this.hit }];
     var tagEl = h(
       'span',
-      { 'class': classes, style: { backgroundColor: this.color } },
-      [this.$slots.default, this.closable && h(
-        'i',
-        { 'class': 'el-tag__close el-icon-close', on: {
-            'click': this.handleClose
-          }
-        },
-        []
-      )]
+      { 'class': classes, style: { backgroundColor: this.color }, on: {
+          'click': this.handleClick
+        }
+      },
+      [this.$slots.default, this.closable && h('i', { 'class': 'el-tag__close el-icon-close', on: {
+          'click': this.handleClose
+        }
+      })]
     );
 
     return this.disableTransitions ? tagEl : h(
@@ -285,7 +245,44 @@ exports.default = {
       [tagEl]
     );
   }
+});
+// CONCATENATED MODULE: ./packages/tag/src/tag.vue?vue&type=script&lang=js&
+ /* harmony default export */ var src_tagvue_type_script_lang_js_ = (tagvue_type_script_lang_js_); 
+// EXTERNAL MODULE: ./node_modules/vue-loader/lib/runtime/componentNormalizer.js
+var componentNormalizer = __webpack_require__(0);
+
+// CONCATENATED MODULE: ./packages/tag/src/tag.vue
+var render, staticRenderFns
+
+
+
+
+/* normalize component */
+
+var component = Object(componentNormalizer["a" /* default */])(
+  src_tagvue_type_script_lang_js_,
+  render,
+  staticRenderFns,
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "packages/tag/src/tag.vue"
+/* harmony default export */ var tag = (component.exports);
+// CONCATENATED MODULE: ./packages/tag/index.js
+
+
+/* istanbul ignore next */
+tag.install = function (Vue) {
+  Vue.component(tag.name, tag);
 };
+
+/* harmony default export */ var packages_tag = __webpack_exports__["default"] = (tag);
 
 /***/ })
 

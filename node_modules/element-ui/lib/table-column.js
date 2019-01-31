@@ -37,12 +37,32 @@ module.exports =
 /******/ 	// define getter function for harmony exports
 /******/ 	__webpack_require__.d = function(exports, name, getter) {
 /******/ 		if(!__webpack_require__.o(exports, name)) {
-/******/ 			Object.defineProperty(exports, name, {
-/******/ 				configurable: false,
-/******/ 				enumerable: true,
-/******/ 				get: getter
-/******/ 			});
+/******/ 			Object.defineProperty(exports, name, { enumerable: true, get: getter });
 /******/ 		}
+/******/ 	};
+/******/
+/******/ 	// define __esModule on exports
+/******/ 	__webpack_require__.r = function(exports) {
+/******/ 		if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
+/******/ 			Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 		}
+/******/ 		Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 	};
+/******/
+/******/ 	// create a fake namespace object
+/******/ 	// mode & 1: value is a module id, require it
+/******/ 	// mode & 2: merge all properties of value into the ns
+/******/ 	// mode & 4: return value when already ns object
+/******/ 	// mode & 8|1: behave like require
+/******/ 	__webpack_require__.t = function(value, mode) {
+/******/ 		if(mode & 1) value = __webpack_require__(value);
+/******/ 		if(mode & 8) return value;
+/******/ 		if((mode & 4) && typeof value === 'object' && value && value.__esModule) return value;
+/******/ 		var ns = Object.create(null);
+/******/ 		__webpack_require__.r(ns);
+/******/ 		Object.defineProperty(ns, 'default', { enumerable: true, value: value });
+/******/ 		if(mode & 2 && typeof value != 'string') for(var key in value) __webpack_require__.d(ns, key, function(key) { return value[key]; }.bind(null, key));
+/******/ 		return ns;
 /******/ 	};
 /******/
 /******/ 	// getDefaultExport function for compatibility with non-harmony modules
@@ -60,65 +80,39 @@ module.exports =
 /******/ 	// __webpack_public_path__
 /******/ 	__webpack_require__.p = "/dist/";
 /******/
+/******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 174);
+/******/ 	return __webpack_require__(__webpack_require__.s = 111);
 /******/ })
 /************************************************************************/
 /******/ ({
 
-/***/ 16:
-/***/ (function(module, exports) {
-
-module.exports = require("element-ui/lib/checkbox");
-
-/***/ }),
-
-/***/ 174:
-/***/ (function(module, exports, __webpack_require__) {
+/***/ 111:
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+__webpack_require__.r(__webpack_exports__);
+
+// EXTERNAL MODULE: external "element-ui/lib/checkbox"
+var checkbox_ = __webpack_require__(16);
+var checkbox_default = /*#__PURE__*/__webpack_require__.n(checkbox_);
+
+// EXTERNAL MODULE: external "element-ui/lib/tag"
+var tag_ = __webpack_require__(26);
+var tag_default = /*#__PURE__*/__webpack_require__.n(tag_);
+
+// EXTERNAL MODULE: external "element-ui/lib/utils/merge"
+var merge_ = __webpack_require__(8);
+var merge_default = /*#__PURE__*/__webpack_require__.n(merge_);
+
+// EXTERNAL MODULE: external "element-ui/lib/utils/util"
+var util_ = __webpack_require__(4);
+
+// CONCATENATED MODULE: ./packages/table/src/table-column.js
 
 
-exports.__esModule = true;
-
-var _tableColumn = __webpack_require__(175);
-
-var _tableColumn2 = _interopRequireDefault(_tableColumn);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-/* istanbul ignore next */
-_tableColumn2.default.install = function (Vue) {
-  Vue.component(_tableColumn2.default.name, _tableColumn2.default);
-};
-
-exports.default = _tableColumn2.default;
-
-/***/ }),
-
-/***/ 175:
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
 
 
-exports.__esModule = true;
-
-var _checkbox = __webpack_require__(16);
-
-var _checkbox2 = _interopRequireDefault(_checkbox);
-
-var _tag = __webpack_require__(25);
-
-var _tag2 = _interopRequireDefault(_tag);
-
-var _merge = __webpack_require__(9);
-
-var _merge2 = _interopRequireDefault(_merge);
-
-var _util = __webpack_require__(2);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var columnIdSeed = 1;
 
@@ -152,20 +146,16 @@ var forced = {
     renderHeader: function renderHeader(h, _ref) {
       var store = _ref.store;
 
-      return h(
-        'el-checkbox',
-        {
-          attrs: {
-            disabled: store.states.data && store.states.data.length === 0,
-            indeterminate: store.states.selection.length > 0 && !this.isAllSelected,
+      return h('el-checkbox', {
+        attrs: {
+          disabled: store.states.data && store.states.data.length === 0,
+          indeterminate: store.states.selection.length > 0 && !this.isAllSelected,
 
-            value: this.isAllSelected },
-          nativeOn: {
-            'click': this.toggleAllSelection
-          }
-        },
-        []
-      );
+          value: this.isAllSelected },
+        nativeOn: {
+          'click': this.toggleAllSelection
+        }
+      });
     },
     renderCell: function renderCell(h, _ref2) {
       var row = _ref2.row,
@@ -173,26 +163,22 @@ var forced = {
           store = _ref2.store,
           $index = _ref2.$index;
 
-      return h(
-        'el-checkbox',
-        {
-          nativeOn: {
-            'click': function click(event) {
-              return event.stopPropagation();
-            }
-          },
-          attrs: {
-            value: store.isSelected(row),
-            disabled: column.selectable ? !column.selectable.call(null, row, $index) : false
-          },
-          on: {
-            'input': function input() {
-              store.commit('rowSelectedChanged', row);
-            }
+      return h('el-checkbox', {
+        nativeOn: {
+          'click': function click(event) {
+            return event.stopPropagation();
           }
         },
-        []
-      );
+        attrs: {
+          value: store.isSelected(row),
+          disabled: column.selectable ? !column.selectable.call(null, row, $index) : false
+        },
+        on: {
+          'input': function input() {
+            store.commit('rowSelectedChanged', row);
+          }
+        }
+      });
     },
     sortable: false,
     resizable: false
@@ -216,11 +202,7 @@ var forced = {
         i = index($index);
       }
 
-      return h(
-        'div',
-        null,
-        [i]
-      );
+      return h('div', [i]);
     },
     sortable: false
   },
@@ -244,11 +226,7 @@ var forced = {
             }
           }
         },
-        [h(
-          'i',
-          { 'class': 'el-icon el-icon-arrow-right' },
-          []
-        )]
+        [h('i', { 'class': 'el-icon el-icon-arrow-right' })]
       );
     },
     sortable: false,
@@ -257,10 +235,10 @@ var forced = {
   }
 };
 
-var getDefaultColumn = function getDefaultColumn(type, options) {
+var table_column_getDefaultColumn = function getDefaultColumn(type, options) {
   var column = {};
 
-  (0, _merge2.default)(column, defaults[type || 'default']);
+  merge_default()(column, defaults[type || 'default']);
 
   for (var name in options) {
     if (options.hasOwnProperty(name)) {
@@ -280,13 +258,13 @@ var getDefaultColumn = function getDefaultColumn(type, options) {
   return column;
 };
 
-var DEFAULT_RENDER_CELL = function DEFAULT_RENDER_CELL(h, _ref7) {
+var table_column_DEFAULT_RENDER_CELL = function DEFAULT_RENDER_CELL(h, _ref7) {
   var row = _ref7.row,
       column = _ref7.column,
       $index = _ref7.$index;
 
   var property = column.property;
-  var value = property && (0, _util.getPropByPath)(row, property).v;
+  var value = property && Object(util_["getPropByPath"])(row, property).v;
   if (column && column.formatter) {
     return column.formatter(row, column, value, $index);
   }
@@ -313,7 +291,7 @@ var parseMinWidth = function parseMinWidth(minWidth) {
   return minWidth;
 };
 
-exports.default = {
+/* harmony default export */ var table_column = ({
   name: 'ElTableColumn',
 
   props: {
@@ -385,8 +363,8 @@ exports.default = {
 
 
   components: {
-    ElCheckbox: _checkbox2.default,
-    ElTag: _tag2.default
+    ElCheckbox: checkbox_default.a,
+    ElTag: tag_default.a
   },
 
   computed: {
@@ -409,6 +387,8 @@ exports.default = {
   created: function created() {
     var _this = this;
 
+    var h = this.$createElement;
+
     this.customRender = this.$options.render;
     this.$options.render = function (h) {
       return h('div', _this.$slots.default);
@@ -426,7 +406,7 @@ exports.default = {
 
     var isColumnGroup = false;
 
-    var column = getDefaultColumn(type, {
+    var column = table_column_getDefaultColumn(type, {
       id: this.columnId,
       columnKey: this.columnKey,
       label: this.label,
@@ -511,7 +491,7 @@ exports.default = {
       }
 
       if (!renderCell) {
-        renderCell = DEFAULT_RENDER_CELL;
+        renderCell = table_column_DEFAULT_RENDER_CELL;
       }
 
       return _self.showOverflowTooltip || _self.showTooltipWhenOverflow ? h(
@@ -642,25 +622,41 @@ exports.default = {
 
     owner.store.commit('insertColumn', this.columnConfig, columnIndex, this.isSubColumn ? parent.columnConfig : null);
   }
+});
+// CONCATENATED MODULE: ./packages/table-column/index.js
+
+
+/* istanbul ignore next */
+table_column.install = function (Vue) {
+  Vue.component(table_column.name, table_column);
 };
 
+/* harmony default export */ var packages_table_column = __webpack_exports__["default"] = (table_column);
+
 /***/ }),
 
-/***/ 2:
+/***/ 16:
 /***/ (function(module, exports) {
 
-module.exports = require("element-ui/lib/utils/util");
+module.exports = require("element-ui/lib/checkbox");
 
 /***/ }),
 
-/***/ 25:
+/***/ 26:
 /***/ (function(module, exports) {
 
 module.exports = require("element-ui/lib/tag");
 
 /***/ }),
 
-/***/ 9:
+/***/ 4:
+/***/ (function(module, exports) {
+
+module.exports = require("element-ui/lib/utils/util");
+
+/***/ }),
+
+/***/ 8:
 /***/ (function(module, exports) {
 
 module.exports = require("element-ui/lib/utils/merge");

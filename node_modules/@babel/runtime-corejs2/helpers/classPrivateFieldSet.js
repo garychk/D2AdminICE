@@ -5,11 +5,16 @@ function _classPrivateFieldSet(receiver, privateMap, value) {
 
   var descriptor = privateMap.get(receiver);
 
-  if (!descriptor.writable) {
-    throw new TypeError("attempted to set read only private field");
+  if (descriptor.set) {
+    descriptor.set.call(receiver, value);
+  } else {
+    if (!descriptor.writable) {
+      throw new TypeError("attempted to set read only private field");
+    }
+
+    descriptor.value = value;
   }
 
-  descriptor.value = value;
   return value;
 }
 

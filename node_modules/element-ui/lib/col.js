@@ -37,12 +37,32 @@ module.exports =
 /******/ 	// define getter function for harmony exports
 /******/ 	__webpack_require__.d = function(exports, name, getter) {
 /******/ 		if(!__webpack_require__.o(exports, name)) {
-/******/ 			Object.defineProperty(exports, name, {
-/******/ 				configurable: false,
-/******/ 				enumerable: true,
-/******/ 				get: getter
-/******/ 			});
+/******/ 			Object.defineProperty(exports, name, { enumerable: true, get: getter });
 /******/ 		}
+/******/ 	};
+/******/
+/******/ 	// define __esModule on exports
+/******/ 	__webpack_require__.r = function(exports) {
+/******/ 		if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
+/******/ 			Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 		}
+/******/ 		Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 	};
+/******/
+/******/ 	// create a fake namespace object
+/******/ 	// mode & 1: value is a module id, require it
+/******/ 	// mode & 2: merge all properties of value into the ns
+/******/ 	// mode & 4: return value when already ns object
+/******/ 	// mode & 8|1: behave like require
+/******/ 	__webpack_require__.t = function(value, mode) {
+/******/ 		if(mode & 1) value = __webpack_require__(value);
+/******/ 		if(mode & 8) return value;
+/******/ 		if((mode & 4) && typeof value === 'object' && value && value.__esModule) return value;
+/******/ 		var ns = Object.create(null);
+/******/ 		__webpack_require__.r(ns);
+/******/ 		Object.defineProperty(ns, 'default', { enumerable: true, value: value });
+/******/ 		if(mode & 2 && typeof value != 'string') for(var key in value) __webpack_require__.d(ns, key, function(key) { return value[key]; }.bind(null, key));
+/******/ 		return ns;
 /******/ 	};
 /******/
 /******/ 	// getDefaultExport function for compatibility with non-harmony modules
@@ -60,46 +80,23 @@ module.exports =
 /******/ 	// __webpack_public_path__
 /******/ 	__webpack_require__.p = "/dist/";
 /******/
+/******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 284);
+/******/ 	return __webpack_require__(__webpack_require__.s = 113);
 /******/ })
 /************************************************************************/
 /******/ ({
 
-/***/ 284:
-/***/ (function(module, exports, __webpack_require__) {
+/***/ 113:
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+__webpack_require__.r(__webpack_exports__);
 
-
-exports.__esModule = true;
-
-var _col = __webpack_require__(285);
-
-var _col2 = _interopRequireDefault(_col);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-/* istanbul ignore next */
-_col2.default.install = function (Vue) {
-  Vue.component(_col2.default.name, _col2.default);
-};
-
-exports.default = _col2.default;
-
-/***/ }),
-
-/***/ 285:
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-exports.__esModule = true;
-
+// CONCATENATED MODULE: ./packages/col/src/col.js
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
-exports.default = {
+/* harmony default export */ var col = ({
   name: 'ElCol',
 
   props: {
@@ -151,12 +148,10 @@ exports.default = {
       if (typeof _this[size] === 'number') {
         classList.push('el-col-' + size + '-' + _this[size]);
       } else if (_typeof(_this[size]) === 'object') {
-        (function () {
-          var props = _this[size];
-          Object.keys(props).forEach(function (prop) {
-            classList.push(prop !== 'span' ? 'el-col-' + size + '-' + prop + '-' + props[prop] : 'el-col-' + size + '-' + props[prop]);
-          });
-        })();
+        var props = _this[size];
+        Object.keys(props).forEach(function (prop) {
+          classList.push(prop !== 'span' ? 'el-col-' + size + '-' + prop + '-' + props[prop] : 'el-col-' + size + '-' + props[prop]);
+        });
       }
     });
 
@@ -165,7 +160,16 @@ exports.default = {
       style: style
     }, this.$slots.default);
   }
+});
+// CONCATENATED MODULE: ./packages/col/index.js
+
+
+/* istanbul ignore next */
+col.install = function (Vue) {
+  Vue.component(col.name, col);
 };
+
+/* harmony default export */ var packages_col = __webpack_exports__["default"] = (col);
 
 /***/ })
 
