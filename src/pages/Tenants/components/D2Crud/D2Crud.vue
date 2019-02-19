@@ -7,6 +7,7 @@
       ref="d2Crud"
       :columns="columns"
       :data="data"
+      :loading="loading"
       title="所有租户"
       selection-row
       index-row
@@ -22,7 +23,9 @@
       @row-remove="handleRowRemove"
       @dialog-cancel="handleDialogCancel"
       @selection-change="handleSelectionChange"
-    />
+    >
+      <el-button slot="headerButton" icon="el-icon-refresh" size="small" type="success" @click="fetchData">刷新</el-button>
+    </d2-crud>
   </div>
 </template>
 
@@ -58,6 +61,7 @@ export default {
         }
       ],
       data: [],
+      loading: true,
       createData: {
         tenancyName: "",
         name: "",
@@ -67,7 +71,8 @@ export default {
       },
       addButton: {
         icon: "el-icon-plus",
-        size: "small"
+        size: "small",
+        type: "primary"
       },
       rowHandle: {
         columnHeader: "编辑表格",
@@ -81,11 +86,11 @@ export default {
           size: "small",
           fixed: "right",
           confirm: true,
-          disabled (index, row) {
-            if (row.name=='Default') {
-              return true
+          disabled(index, row) {
+            if (row.name == "Default") {
+              return true;
             }
-            return false
+            return false;
           }
         }
       },
@@ -138,13 +143,7 @@ export default {
     };
   },
   mounted() {
-    this.GetAll({
-      vm: this,
-      skipCount: (this.pagination.currentPage - 1) * this.pagination.pageSize,
-      maxResultCount: this.pagination.pageSize
-    }).then(res => {
-      this.data = res.result;
-    });
+    this.fetchData();
   },
   methods: {
     ...mapActions("d2admin/Tenants", ["GetAll", "CreateOrUpdate"]),
@@ -153,7 +152,7 @@ export default {
       this.createData.name = row.name;
       this.createData.tenancyName = row.name;
       this.createData.isActive = row.isActive;
-      this.createData.adminEmailAddress = row.name+"@demo.com";
+      this.createData.adminEmailAddress = row.name + "@demo.com";
       this.CreateOrUpdate(this.createData).then(async res => {
         this.$message({
           message: "添加成功",
@@ -196,6 +195,17 @@ export default {
     },
     handleSelectionChange(selection) {
       console.log(selection);
+    },
+    fetchData() {
+      this.loading = true;
+      this.GetAll({
+        vm: this,
+        skipCount: (this.pagination.currentPage - 1) * this.pagination.pageSize,
+        maxResultCount: this.pagination.pageSize
+      }).then(res => {
+        this.data = res.result;
+        this.loading = false;
+      });
     }
   }
 };

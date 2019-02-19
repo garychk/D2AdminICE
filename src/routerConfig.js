@@ -110,6 +110,10 @@ const routerConfig = [
     path: '/Config',
     layout: HeaderAside,
     component: Config,
+    meta: {
+      requiresAuth: true,
+      title: '系统设置',
+    },
   },
 ]; // 不参与菜单显示的
 // ice 不会处理这部分

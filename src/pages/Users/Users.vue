@@ -23,7 +23,7 @@
           @pagination-current-change="paginationCurrentChange"
         >
           <add-button slot="headerButton"/>
-          <el-button slot="headerButton" icon="el-icon-refresh" size="small" @click="refreshData">刷新</el-button>
+          <el-button slot="headerButton" icon="el-icon-refresh" size="small" type="success" @click="refreshData">刷新</el-button>
           <el-button slot="headerButton" type="danger" icon="el-icon-delete" size="small">删除</el-button>
         </d2-crud>
       </div>

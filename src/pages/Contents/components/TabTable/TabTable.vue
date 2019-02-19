@@ -16,7 +16,8 @@
             @row-edit="handleRowEdit"
             @row-remove="handleRowRemove"
             @dialog-cancel="handleDialogCancel"
-          ></d2-crud>
+          >
+          </d2-crud>
         </el-tab-pane>
       </el-tabs>
     </basic-container>

@@ -1,8 +1,8 @@
 <template>
   <!-- d2-container 文档 https://doc.d2admin.fairyever.com/zh/sys-components/container.html -->
   <d2-container class="page-Config">
-    <template slot="header">Config</template>
-    <template slot="footer">自动生成 0 个组件</template>
+    <template slot="header">系统配置</template>
+    <template slot="footer"></template>
   </d2-container>
 </template>
 
