@@ -10,6 +10,7 @@ import Demo2 from './pages/Demo2';
 import Contents from './pages/Contents';
 import Tenants from './pages/Tenants';
 import Users from './pages/Users';
+import Config from './pages/Config';
 import HeaderAside from './layouts/HeaderAside'; // 变量名 routerConfig 为 iceworks 检测关键字
 // ice 会自动在这个变量下添加路由数据
 // 请不要修改名称
@@ -78,7 +79,6 @@ const routerConfig = [
       title: '全局概况',
     },
   },
-  
   {
     path: '/Tenants',
     layout: HeaderAside,
@@ -105,6 +105,11 @@ const routerConfig = [
       requiresAuth: true,
       title: '内容管理',
     },
+  },
+  {
+    path: '/Config',
+    layout: HeaderAside,
+    component: Config,
   },
 ]; // 不参与菜单显示的
 // ice 不会处理这部分

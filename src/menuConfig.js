@@ -18,10 +18,6 @@ const asideMenuConfig = [
         name: '设置',
         path: '/demo1/',
       },
-      {
-        name: '全局概况',
-        path: '/demo2/',
-      },
     ],
   },
   {
@@ -39,44 +35,17 @@ const asideMenuConfig = [
     path: '/Contents',
     icon: 'file-o',
   },
-  
+  {
+    name: 'Config',
+    path: '/Config',
+    icon: 'home',
+  },
 ]; // 顶栏菜单配置
 // ice 不会修改 headerMenuConfig
 // 如果你需要功能开发之前就配置出菜单原型，可以只设置 name 字段
 // D2Admin 会自动添加不重复 id 生成菜单，并在点击时提示这是一个临时菜单
 
 const headerMenuConfig = [
-  {
-    name: '内容管理',
-    icon: 'file-o',
-    children: [
-      {
-        name: 'menu 1',
-        children: [
-          {
-            name: 'menu 1-1',
-            children: [
-              {
-                name: 'menu 1-1-1',
-              },
-              {
-                name: 'menu 1-1-2',
-              },
-            ],
-          },
-          {
-            name: 'menu 1-2',
-          },
-        ],
-      },
-      {
-        name: 'menu 2',
-      },
-      {
-        name: 'menu 3',
-      },
-    ],
-  },
   {
     name: '系统设置',
     icon: 'gear',
