@@ -104,7 +104,13 @@ export default {
           icon: "el-icon-delete",
           text: "删除",
           type: "danger",
-          size: "small"
+          size: "small",
+          disabled(index, row) {
+            if (row.userName == "admin") {
+              return true;
+            }
+            return false;
+          }
         }
       },
       formTemplate: {
