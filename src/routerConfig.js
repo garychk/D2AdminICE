@@ -11,6 +11,10 @@ import Contents from './pages/Contents';
 import Tenants from './pages/Tenants';
 import Users from './pages/Users';
 import Config from './pages/Config';
+import Department from './pages/Department';
+import Members from './pages/Members';
+import Powers from './pages/Powers';
+import Categories from './pages/Categories';
 import HeaderAside from './layouts/HeaderAside'; // 变量名 routerConfig 为 iceworks 检测关键字
 // ice 会自动在这个变量下添加路由数据
 // 请不要修改名称
@@ -33,18 +37,14 @@ const routerConfig = [
     name: 'index',
     layout: HeaderAside,
     component: Index,
-  }, // 刷新页面 必须保留
+  },
   {
-    path: '/refresh',
-    name: 'refresh',
+    path: '/Users',
     layout: HeaderAside,
-    hidden: true,
-    component: {
-      beforeRouteEnter(to, from, next) {
-        next(vm => vm.$router.replace(from.fullPath));
-      },
-
-      render: h => h(),
+    component: Users,
+    meta: {
+      requiresAuth: true,
+      title: '管理员',
     },
   }, // 页面重定向 必须保留
   {
@@ -78,6 +78,19 @@ const routerConfig = [
       requiresAuth: true,
       title: '全局概况',
     },
+  }, // 刷新页面 必须保留
+  {
+    path: '/refresh',
+    name: 'refresh',
+    layout: HeaderAside,
+    hidden: true,
+    component: {
+      beforeRouteEnter(to, from, next) {
+        next(vm => vm.$router.replace(from.fullPath));
+      },
+
+      render: h => h(),
+    },
   },
   {
     path: '/Tenants',
@@ -86,15 +99,6 @@ const routerConfig = [
     meta: {
       requiresAuth: true,
       title: '租户管理',
-    },
-  },
-  {
-    path: '/Users',
-    layout: HeaderAside,
-    component: Users,
-    meta: {
-      requiresAuth: true,
-      title: '管理员',
     },
   },
   {
@@ -113,6 +117,42 @@ const routerConfig = [
     meta: {
       requiresAuth: true,
       title: '系统设置',
+    },
+  },
+  {
+    path: '/Department',
+    layout: HeaderAside,
+    component: Department,
+    meta: {
+      requiresAuth: true,
+      title: '部门管理',
+    },
+  },
+  {
+    path: '/Members',
+    layout: HeaderAside,
+    component: Members,
+    meta: {
+      requiresAuth: true,
+      title: '用户管理',
+    },
+  },
+  {
+    path: '/Powers',
+    layout: HeaderAside,
+    component: Powers,
+    meta: {
+      requiresAuth: true,
+      title: '权限设置',
+    },
+  },
+  {
+    path: '/Categories',
+    layout: HeaderAside,
+    component: Categories,
+    meta: {
+      requiresAuth: true,
+      title: '分类设置',
     },
   },
 ]; // 不参与菜单显示的

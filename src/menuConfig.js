@@ -13,29 +13,37 @@ const asideMenuConfig = [
   {
     name: '控制台',
     icon: 'desktop',
+    path: '/index/',
+  },
+  {
+    name: '系统设置',
+    icon: 'cog',
     children: [
       {
-        name: '设置',
-        path: '/Config/',
-        icon: 'cog'
-      }
-    ],
-  },
-  {
-    name: '租户管理',
-    path: '/Tenants',
-    icon: 'user',
-  },
-  {
-    name: '管理员',
-    path: '/Users',
-    icon: 'users',
-    children: [
+        name: '租户管理',
+        path: '/Tenants',
+        icon: 'user',
+      },
+      {
+        name: '管理员',
+        path: '/Users/',
+        icon: 'users',
+      },
+      {
+        name: '部门设置',
+        path: '/Department/',
+        icon: 'square-o',
+      },
+      {
+        name: '用户设置',
+        path: '/Members/',
+        icon: 'user-o',
+      },
       {
         name: '权限设置',
-        path: '/Config/',
-        icon: 'lock'
-      }
+        path: '/Powers/',
+        icon: 'lock',
+      },
     ],
   },
   {
@@ -45,9 +53,9 @@ const asideMenuConfig = [
     children: [
       {
         name: '分类设置',
-        path: '/Config/',
-        icon: 'list-alt'
-      }
+        path: '/Categories/',
+        icon: 'list-alt',
+      },
     ],
   },
   {
@@ -61,7 +69,6 @@ const asideMenuConfig = [
 // D2Admin 会自动添加不重复 id 生成菜单，并在点击时提示这是一个临时菜单
 
 const headerMenuConfig = [
-  
   {
     name: '系统设置',
     icon: 'gear',
@@ -73,7 +80,7 @@ const headerMenuConfig = [
       },
       {
         name: '系统帮助',
-        path: 'https://doc.d2admin.fairyever.com/zh/',
+        path: 'https://d2admin.fairyever.com/#/index',
         icon: 'info',
       },
     ],
