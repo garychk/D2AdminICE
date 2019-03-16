@@ -3,7 +3,7 @@
   <d2-container class="page-Config">
     <template slot="header">系统配置</template>
     <BasicForm/>
-    <template slot="footer"></template>
+    <template slot="footer"><el-tag>项目地址：<a href="https://github.com/garychk/D2AdminICE" target="_blank">https://github.com/garychk/D2AdminICE</a></el-tag> </template>
   </d2-container>
 </template>
 
