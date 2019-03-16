@@ -21,11 +21,11 @@ import RouteInfo from './componnets/RouteInfo'
 import FooterLink from './componnets/FooterLink'
 export default {
   // 如果需要缓存页面
-  // name 字段需要设置为和本页路由 name 字段一致
+  // name 字段需要设置为和本页路由 name 字段一致的
   name: 'demo2',
   components: {
     RouteInfo,
     FooterLink
   }
 }
-</script>
+</scrip

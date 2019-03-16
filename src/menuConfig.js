@@ -13,7 +13,7 @@ const asideMenuConfig = [
   {
     name: '控制台',
     icon: 'desktop',
-    path: '/index/',
+    path: '/Dashboard/',
   },
   {
     name: '系统设置',
@@ -96,4 +96,4 @@ const headerMenuConfig = [
 
 export const menuHeader = util.recursiveMenuConfig(headerMenuConfig); // 导出侧边栏菜单
 
-export const menuAside = util.recursiveMenuConfig(asideMenuConfig);
+export const menuAside = util.recursiveMenuConfig(asideMenuConfi

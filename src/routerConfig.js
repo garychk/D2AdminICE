@@ -15,6 +15,7 @@ import Department from './pages/Department';
 import Members from './pages/Members';
 import Powers from './pages/Powers';
 import Categories from './pages/Categories';
+import Dashboard from './pages/Dashboard';
 import HeaderAside from './layouts/HeaderAside'; // 变量名 routerConfig 为 iceworks 检测关键字
 // ice 会自动在这个变量下添加路由数据
 // 请不要修改名称
@@ -31,21 +32,20 @@ import HeaderAside from './layouts/HeaderAside'; // 变量名 routerConfig 为 i
 // 下面两个页面就是对比 你可以分别观察两个页面上显示的路由数据差异
 
 const routerConfig = [
-  // 首页 必须 name:index
+  {
+    path: '/Contents',
+    layout: HeaderAside,
+    component: Contents,
+    meta: {
+      requiresAuth: true,
+      title: '内容管理',
+    },
+  }, // 首页 必须 name:index
   {
     path: '/',
     name: 'index',
     layout: HeaderAside,
     component: Index,
-  },
-  {
-    path: '/Users',
-    layout: HeaderAside,
-    component: Users,
-    meta: {
-      requiresAuth: true,
-      title: '管理员',
-    },
   }, // 页面重定向 必须保留
   {
     path: '/redirect/:route*',
@@ -102,12 +102,12 @@ const routerConfig = [
     },
   },
   {
-    path: '/Contents',
+    path: '/Users',
     layout: HeaderAside,
-    component: Contents,
+    component: Users,
     meta: {
       requiresAuth: true,
-      title: '内容管理',
+      title: '管理员',
     },
   },
   {
@@ -155,6 +155,15 @@ const routerConfig = [
       title: '分类设置',
     },
   },
+  {
+    path: '/Dashboard',
+    layout: HeaderAside,
+    component: Dashboard,
+    meta: {
+      requiresAuth: true,
+      title: '控制台',
+    },
+  },
 ]; // 不参与菜单显示的
 // ice 不会处理这部分
 // 但是这部分路由也会被注册
@@ -183,12 +192,4 @@ export default util.recursiveRouterConfig([
 ]); // 导出参与多标签页处理的路由设置
 // 这个数据会在 mian.js 中使用
 
-export const frameInRoutes = util.recursiveRouterConfig(routerConfig).map(e => {
-  const route = e.children ? e.children[0] : e;
-  return {
-    path: e.path,
-    name: route.name,
-    hidden: route.hidden,
-    meta: route.meta,
-  };
-});
+export const frameInRoutes = util.recursi
