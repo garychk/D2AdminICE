@@ -24,19 +24,37 @@ const asideMenuConfig = [
   {
     name: '租户管理',
     path: '/Tenants',
-    icon: 'tv',
+    icon: 'user',
   },
   {
     name: '管理员',
     path: '/Users',
-    icon: 'user-o',
+    icon: 'users',
+    children: [
+      {
+        name: '权限设置',
+        path: '/Config/',
+        icon: 'lock'
+      }
+    ],
   },
   {
     name: '内容管理',
     path: '/Contents',
-    icon: 'file-o',
+    icon: 'file-text-o',
+    children: [
+      {
+        name: '分类设置',
+        path: '/Config/',
+        icon: 'list-alt'
+      }
+    ],
   },
-  
+  {
+    name: '模块管理',
+    path: '/Tenants',
+    icon: 'cube',
+  },
 ]; // 顶栏菜单配置
 // ice 不会修改 headerMenuConfig
 // 如果你需要功能开发之前就配置出菜单原型，可以只设置 name 字段
