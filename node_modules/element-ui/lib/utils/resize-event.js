@@ -1,8 +1,6 @@
 'use strict';
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
+exports.__esModule = true;
 exports.removeResizeListener = exports.addResizeListener = undefined;
 
 var _resizeObserverPolyfill = require('resize-observer-polyfill');
@@ -15,33 +13,25 @@ var isServer = typeof window === 'undefined';
 
 /* istanbul ignore next */
 var resizeHandler = function resizeHandler(entries) {
-  var _iteratorNormalCompletion = true;
-  var _didIteratorError = false;
-  var _iteratorError = undefined;
+  for (var _iterator = entries, _isArray = Array.isArray(_iterator), _i = 0, _iterator = _isArray ? _iterator : _iterator[Symbol.iterator]();;) {
+    var _ref;
 
-  try {
-    for (var _iterator = entries[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-      var entry = _step.value;
-
-      var listeners = entry.target.__resizeListeners__ || [];
-      if (listeners.length) {
-        listeners.forEach(function (fn) {
-          fn();
-        });
-      }
+    if (_isArray) {
+      if (_i >= _iterator.length) break;
+      _ref = _iterator[_i++];
+    } else {
+      _i = _iterator.next();
+      if (_i.done) break;
+      _ref = _i.value;
     }
-  } catch (err) {
-    _didIteratorError = true;
-    _iteratorError = err;
-  } finally {
-    try {
-      if (!_iteratorNormalCompletion && _iterator.return) {
-        _iterator.return();
-      }
-    } finally {
-      if (_didIteratorError) {
-        throw _iteratorError;
-      }
+
+    var entry = _ref;
+
+    var listeners = entry.target.__resizeListeners__ || [];
+    if (listeners.length) {
+      listeners.forEach(function (fn) {
+        fn();
+      });
     }
   }
 };

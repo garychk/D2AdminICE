@@ -2,16 +2,19 @@
   <!-- d2-container 文档 https://doc.d2admin.fairyever.com/zh/sys-components/container.html -->
   <d2-container class="page-Config">
     <template slot="header">系统配置</template>
+    <BasicForm/>
     <template slot="footer"></template>
   </d2-container>
 </template>
 
 <script>
+import BasicForm from "./components/BasicForm";
 // 组件
 // 请删除下面代码中你不需要的部分
 export default {
   name: 'Config',
   components: {
+    BasicForm
   },
   // 数据
   data () {

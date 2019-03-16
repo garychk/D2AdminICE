@@ -1,7 +1,7 @@
 <template>
   <!-- d2-container 文档 https://doc.d2admin.fairyever.com/zh/sys-components/container.html -->
   <d2-container class="page-Department">
-    <template slot="header">Department</template>
+    <template slot="header">部门设置</template>
     <template slot="footer">自动生成 0 个组件</template>
   </d2-container>
 </template>

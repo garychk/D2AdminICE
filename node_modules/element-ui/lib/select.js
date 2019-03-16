@@ -990,12 +990,20 @@ var render = function() {
               (!_vm.allowCreate ||
                 _vm.loading ||
                 (_vm.allowCreate && _vm.options.length === 0))
-                ? _c("p", { staticClass: "el-select-dropdown__empty" }, [
-                    _vm._v("\n        " + _vm._s(_vm.emptyText) + "\n      ")
-                  ])
+                ? [
+                    _vm.$slots.empty
+                      ? _vm._t("empty")
+                      : _c("p", { staticClass: "el-select-dropdown__empty" }, [
+                          _vm._v(
+                            "\n          " +
+                              _vm._s(_vm.emptyText) +
+                              "\n        "
+                          )
+                        ])
+                  ]
                 : _vm._e()
             ],
-            1
+            2
           )
         ],
         1

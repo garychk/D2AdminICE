@@ -1,8 +1,6 @@
 'use strict';
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
+exports.__esModule = true;
 exports.i18n = exports.use = exports.t = undefined;
 
 var _zhCN = require('element-ui/lib/locale/lang/zh-CN');

@@ -742,15 +742,19 @@ var dom_ = __webpack_require__(2);
           indexPath = item.indexPath;
 
       var oldActiveIndex = this.activeIndex;
+      var hasIndex = item.index !== null;
 
-      this.activeIndex = item.index;
+      if (hasIndex) {
+        this.activeIndex = item.index;
+      }
+
       this.$emit('select', index, indexPath, item);
 
       if (this.mode === 'horizontal' || this.collapse) {
         this.openedMenus = [];
       }
 
-      if (this.router) {
+      if (this.router && hasIndex) {
         this.routeToItem(item, function (error) {
           _this.activeIndex = oldActiveIndex;
           if (error) console.error(error);

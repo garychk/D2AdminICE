@@ -47,10 +47,15 @@ const asideMenuConfig = [
     ],
   },
   {
-    name: '内容管理',
+    name: '内容设置',
     path: '/Contents',
     icon: 'file-text-o',
     children: [
+      {
+        name: '内容管理',
+        path: '/Contents/',
+        icon: 'file-text-o',
+      },
       {
         name: '分类设置',
         path: '/Categories/',

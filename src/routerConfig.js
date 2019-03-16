@@ -125,7 +125,7 @@ const routerConfig = [
     component: Department,
     meta: {
       requiresAuth: true,
-      title: '部门管理',
+      title: '部门设置',
     },
   },
   {

@@ -1,8 +1,6 @@
 'use strict';
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
+exports.__esModule = true;
 
 exports.default = function (instance, callback) {
   var speed = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 300;

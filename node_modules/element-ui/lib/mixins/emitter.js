@@ -1,8 +1,6 @@
 "use strict";
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
+exports.__esModule = true;
 function _broadcast(componentName, eventName, params) {
   this.$children.forEach(function (child) {
     var name = child.$options.componentName;

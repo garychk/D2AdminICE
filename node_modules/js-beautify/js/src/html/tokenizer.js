@@ -31,6 +31,8 @@
 var BaseTokenizer = require('../core/tokenizer').Tokenizer;
 var BASETOKEN = require('../core/tokenizer').TOKEN;
 var Directives = require('../core/directives').Directives;
+var TemplatablePattern = require('../core/templatablepattern').TemplatablePattern;
+var Pattern = require('../core/pattern').Pattern;
 
 var TOKEN = {
   TAG_OPEN: 'TK_TAG_OPEN',
@@ -54,7 +56,39 @@ var Tokenizer = function(input_string, options) {
 
   // Words end at whitespace or when a tag starts
   // if we are indenting handlebars, they are considered tags
-  this._word_pattern = this._options.indent_handlebars ? /[\n\r\t <]|{{/g : /[\n\r\t <]/g;
+  var templatable_reader = new TemplatablePattern(this._input);
+  var pattern_reader = new Pattern(this._input);
+
+  this.__patterns = {
+    word: templatable_reader.until(/[\n\r\t <]/),
+    single_quote: templatable_reader.until_after(/'/),
+    double_quote: templatable_reader.until_after(/"/),
+    attribute: templatable_reader.until(/[\n\r\t =\/>]/),
+    element_name: templatable_reader.until(/[\n\r\t >\/]/),
+
+    handlebars_comment: pattern_reader.starting_with(/{{!--/).until_after(/--}}/),
+    handlebars: pattern_reader.starting_with(/{{/).until_after(/}}/),
+    handlebars_open: pattern_reader.until(/[\n\r\t }]/),
+    handlebars_raw_close: pattern_reader.until(/}}/),
+    comment: pattern_reader.starting_with(/<!--/).until_after(/-->/),
+    cdata: pattern_reader.starting_with(/<!\[cdata\[/).until_after(/]]>/),
+    // https://en.wikipedia.org/wiki/Conditional_comment
+    conditional_comment: pattern_reader.starting_with(/<!\[/).until_after(/]>/),
+    processing: pattern_reader.starting_with(/<\?/).until_after(/\?>/)
+  };
+
+  if (this._options.indent_handlebars) {
+    this.__patterns.word = this.__patterns.word.exclude('handlebars');
+  }
+
+  this._unformatted_content_delimiter = null;
+
+  if (this._options.unformatted_content_delimiter) {
+    var literal_regexp = this._input.get_literal_regexp(this._options.unformatted_content_delimiter);
+    this.__patterns.unformatted_content_delimiter =
+      pattern_reader.matching(literal_regexp)
+      .until_after(literal_regexp);
+  }
 };
 Tokenizer.prototype = new BaseTokenizer();
 
@@ -78,20 +112,21 @@ Tokenizer.prototype._reset = function() {
 };
 
 Tokenizer.prototype._get_next_token = function(previous_token, open_token) { // jshint unused:false
-  this._readWhitespace();
   var token = null;
+  this._readWhitespace();
   var c = this._input.peek();
 
   if (c === null) {
     return this._create_token(TOKEN.EOF, '');
   }
 
+  token = token || this._read_open_handlebars(c, open_token);
   token = token || this._read_attribute(c, previous_token, open_token);
   token = token || this._read_raw_content(previous_token, open_token);
+  token = token || this._read_close(c, open_token);
+  token = token || this._read_content_word(c);
   token = token || this._read_comment(c);
   token = token || this._read_open(c, open_token);
-  token = token || this._read_close(c, open_token);
-  token = token || this._read_content_word();
   token = token || this._create_token(TOKEN.UNKNOWN, this._input.next());
 
   return token;
@@ -99,71 +134,32 @@ Tokenizer.prototype._get_next_token = function(previous_token, open_token) { // 
 
 Tokenizer.prototype._read_comment = function(c) { // jshint unused:false
   var token = null;
-  if (c === '<' || c === '{') {
+  var resulting_string = null;
+  var directives = null;
+
+  if (c === '<') {
     var peek1 = this._input.peek(1);
-    var peek2 = this._input.peek(2);
-    if ((c === '<' && (peek1 === '!' || peek1 === '?' || peek1 === '%')) ||
-      this._options.indent_handlebars && c === '{' && peek1 === '{' && peek2 === '!') {
-      //if we're in a comment, do something special
-      // We treat all comments as literals, even more than preformatted tags
-      // we just look for the appropriate close tag
+    //if we're in a comment, do something special
+    // We treat all comments as literals, even more than preformatted tags
+    // we just look for the appropriate close tag
+    if (c === '<' && (peek1 === '!' || peek1 === '?')) {
+      resulting_string = this.__patterns.comment.read();
 
-      // this is will have very poor perf, but will work for now.
-      var comment = '',
-        delimiter = '>',
-        matched = false;
-
-      var input_char = this._input.next();
-
-      while (input_char) {
-        comment += input_char;
-
-        // only need to check for the delimiter if the last chars match
-        if (comment.charAt(comment.length - 1) === delimiter.charAt(delimiter.length - 1) &&
-          comment.indexOf(delimiter) !== -1) {
-          break;
+      // only process directive on html comments
+      if (resulting_string) {
+        directives = directives_core.get_directives(resulting_string);
+        if (directives && directives.ignore === 'start') {
+          resulting_string += directives_core.readIgnored(this._input);
         }
-
-        // only need to search for custom delimiter for the first few characters
-        if (!matched) {
-          matched = comment.length > 10;
-          if (comment.indexOf('<![if') === 0) { //peek for <![if conditional comment
-            delimiter = '<![endif]>';
-            matched = true;
-          } else if (comment.indexOf('<![cdata[') === 0) { //if it's a <[cdata[ comment...
-            delimiter = ']]>';
-            matched = true;
-          } else if (comment.indexOf('<![') === 0) { // some other ![ comment? ...
-            delimiter = ']>';
-            matched = true;
-          } else if (comment.indexOf('<!--') === 0) { // <!-- comment ...
-            delimiter = '-->';
-            matched = true;
-          } else if (comment.indexOf('{{!--') === 0) { // {{!-- handlebars comment
-            delimiter = '--}}';
-            matched = true;
-          } else if (comment.indexOf('{{!') === 0) { // {{! handlebars comment
-            if (comment.length === 5 && comment.indexOf('{{!--') === -1) {
-              delimiter = '}}';
-              matched = true;
-            }
-          } else if (comment.indexOf('<?') === 0) { // {{! handlebars comment
-            delimiter = '?>';
-            matched = true;
-          } else if (comment.indexOf('<%') === 0) { // {{! handlebars comment
-            delimiter = '%>';
-            matched = true;
-          }
-        }
-
-        input_char = this._input.next();
+      } else {
+        resulting_string = this.__patterns.cdata.read();
+        resulting_string = resulting_string || this.__patterns.conditional_comment.read();
+        resulting_string = resulting_string || this.__patterns.processing.read();
       }
+    }
 
-      var directives = directives_core.get_directives(comment);
-      if (directives && directives.ignore === 'start') {
-        comment += directives_core.readIgnored(this._input);
-      }
-      token = this._create_token(TOKEN.COMMENT, comment);
+    if (resulting_string) {
+      token = this._create_token(TOKEN.COMMENT, resulting_string);
       token.directives = directives;
     }
   }
@@ -176,15 +172,36 @@ Tokenizer.prototype._read_open = function(c, open_token) {
   var token = null;
   if (!open_token) {
     if (c === '<') {
-      resulting_string = this._input.read(/<(?:[^\n\r\t >{][^\n\r\t >{/]*)?/g);
-      token = this._create_token(TOKEN.TAG_OPEN, resulting_string);
-    } else if (this._options.indent_handlebars && c === '{' && this._input.peek(1) === '{') {
-      resulting_string = this._input.readUntil(/[\n\r\t }]/g);
+
+      resulting_string = this._input.next();
+      if (this._input.peek() === '/') {
+        resulting_string += this._input.next();
+      }
+      resulting_string += this.__patterns.element_name.read();
       token = this._create_token(TOKEN.TAG_OPEN, resulting_string);
     }
   }
   return token;
 };
+
+Tokenizer.prototype._read_open_handlebars = function(c, open_token) {
+  var resulting_string = null;
+  var token = null;
+  if (!open_token) {
+    if (this._options.indent_handlebars && c === '{' && this._input.peek(1) === '{') {
+      if (this._input.peek(2) === '!') {
+        resulting_string = this.__patterns.handlebars_comment.read();
+        resulting_string = resulting_string || this.__patterns.handlebars.read();
+        token = this._create_token(TOKEN.COMMENT, resulting_string);
+      } else {
+        resulting_string = this.__patterns.handlebars_open.read();
+        token = this._create_token(TOKEN.TAG_OPEN, resulting_string);
+      }
+    }
+  }
+  return token;
+};
+
 
 Tokenizer.prototype._read_close = function(c, open_token) {
   var resulting_string = null;
@@ -215,25 +232,14 @@ Tokenizer.prototype._read_attribute = function(c, previous_token, open_token) {
       token = this._create_token(TOKEN.EQUALS, this._input.next());
     } else if (c === '"' || c === "'") {
       var content = this._input.next();
-      var input_string = '';
-      var string_pattern = new RegExp(c + '|{{', 'g');
-      while (this._input.hasNext()) {
-        input_string = this._input.readUntilAfter(string_pattern);
-        content += input_string;
-        if (input_string[input_string.length - 1] === '"' || input_string[input_string.length - 1] === "'") {
-          break;
-        } else if (this._input.hasNext()) {
-          content += this._input.readUntilAfter(/}}/g);
-        }
+      if (c === '"') {
+        content += this.__patterns.double_quote.read();
+      } else {
+        content += this.__patterns.single_quote.read();
       }
-
       token = this._create_token(TOKEN.VALUE, content);
     } else {
-      if (c === '{' && this._input.peek(1) === '{') {
-        resulting_string = this._input.readUntilAfter(/}}/g);
-      } else {
-        resulting_string = this._input.readUntil(/[\n\r\t =\/>]/g);
-      }
+      resulting_string = this.__patterns.attribute.read();
 
       if (resulting_string) {
         if (previous_token.type === TOKEN.EQUALS) {
@@ -261,7 +267,7 @@ Tokenizer.prototype._is_content_unformatted = function(tag_name) {
 Tokenizer.prototype._read_raw_content = function(previous_token, open_token) { // jshint unused:false
   var resulting_string = '';
   if (open_token && open_token.text[0] === '{') {
-    resulting_string = this._input.readUntil(/}}/g);
+    resulting_string = this.__patterns.handlebars_raw_close.read();
   } else if (previous_token.type === TOKEN.TAG_CLOSE && (previous_token.opened.text[0] === '<')) {
     var tag_name = previous_token.opened.text.substr(1).toLowerCase();
     if (this._is_content_unformatted(tag_name)) {
@@ -276,9 +282,17 @@ Tokenizer.prototype._read_raw_content = function(previous_token, open_token) { /
   return null;
 };
 
-Tokenizer.prototype._read_content_word = function() {
-  // if we get here and we see handlebars treat them as plain text
-  var resulting_string = this._input.readUntil(this._word_pattern);
+Tokenizer.prototype._read_content_word = function(c) {
+  var resulting_string = '';
+  if (this._options.unformatted_content_delimiter) {
+    if (c === this._options.unformatted_content_delimiter[0]) {
+      resulting_string = this.__patterns.unformatted_content_delimiter.read();
+    }
+  }
+
+  if (!resulting_string) {
+    resulting_string = this.__patterns.word.read();
+  }
   if (resulting_string) {
     return this._create_token(TOKEN.TEXT, resulting_string);
   }

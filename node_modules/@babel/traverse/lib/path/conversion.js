@@ -168,7 +168,6 @@ function hoistFunctionEnvironment(fnPath, specCompliant = false, allowInsertArro
       },
 
       ClassProperty(child) {
-        if (child.node.static) return;
         child.skip();
       },
 
@@ -316,7 +315,6 @@ function getThisBinding(thisEnvFn, inConstructor) {
       },
 
       ClassProperty(child) {
-        if (child.node.static) return;
         child.skip();
       },
 
@@ -405,7 +403,6 @@ function getScopeInformation(fnPath) {
   const superCalls = [];
   fnPath.traverse({
     ClassProperty(child) {
-      if (child.node.static) return;
       child.skip();
     },
 

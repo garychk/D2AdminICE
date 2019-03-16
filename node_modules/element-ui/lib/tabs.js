@@ -249,7 +249,6 @@ var util_ = __webpack_require__(4);
       get: function get() {
         var _this = this;
 
-        if (!this.$parent.$refs.tabs) return {};
         var style = {};
         var offset = 0;
         var tabSize = 0;
@@ -261,7 +260,7 @@ var util_ = __webpack_require__(4);
           });
         };
         this.tabs.every(function (tab, index) {
-          var $el = Object(util_["arrayFind"])(_this.$parent.$refs.tabs, function (t) {
+          var $el = Object(util_["arrayFind"])(_this.$parent.$refs.tabs || [], function (t) {
             return t.id.replace('tab-', '') === tab.paneName;
           });
           if (!$el) {

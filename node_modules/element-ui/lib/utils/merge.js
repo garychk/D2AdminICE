@@ -1,8 +1,6 @@
 "use strict";
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
+exports.__esModule = true;
 
 exports.default = function (target) {
   for (var i = 1, j = arguments.length; i < j; i++) {

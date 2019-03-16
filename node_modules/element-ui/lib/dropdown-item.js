@@ -82,7 +82,7 @@ module.exports =
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 90);
+/******/ 	return __webpack_require__(__webpack_require__.s = 70);
 /******/ })
 /************************************************************************/
 /******/ ({
@@ -196,7 +196,7 @@ module.exports = require("element-ui/lib/mixins/emitter");
 
 /***/ }),
 
-/***/ 90:
+/***/ 70:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -221,7 +221,7 @@ var render = function() {
       },
       on: { click: _vm.handleClick }
     },
-    [_vm._t("default")],
+    [_vm.icon ? _c("i", { class: _vm.icon }) : _vm._e(), _vm._t("default")],
     2
   )
 }
@@ -250,6 +250,7 @@ var emitter_default = /*#__PURE__*/__webpack_require__.n(emitter_);
 //
 //
 //
+//
 
 
 
@@ -261,7 +262,8 @@ var emitter_default = /*#__PURE__*/__webpack_require__.n(emitter_);
   props: {
     command: {},
     disabled: Boolean,
-    divided: Boolean
+    divided: Boolean,
+    icon: String
   },
 
   methods: {

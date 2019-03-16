@@ -816,9 +816,6 @@ var external_vue_default = /*#__PURE__*/__webpack_require__.n(external_vue_);
 var merge_ = __webpack_require__(8);
 var merge_default = /*#__PURE__*/__webpack_require__.n(merge_);
 
-// EXTERNAL MODULE: external "element-ui/lib/utils/dom"
-var dom_ = __webpack_require__(2);
-
 // EXTERNAL MODULE: external "element-ui/lib/utils/util"
 var util_ = __webpack_require__(4);
 
@@ -955,7 +952,6 @@ var getRowIdentity = function getRowIdentity(row, rowKey) {
 
 
 
-
 var table_store_sortData = function sortData(data, states) {
   var sortingColumn = states.sortingColumn;
   if (!sortingColumn || typeof sortingColumn.sortable === 'string') {
@@ -1027,7 +1023,7 @@ var toggleRowExpansion = function toggleRowExpansion(states, row, expanded) {
   return changed;
 };
 
-var TableStore = function TableStore(table) {
+var table_store_TableStore = function TableStore(table) {
   var initialState = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
   if (!table) {
@@ -1066,6 +1062,33 @@ var TableStore = function TableStore(table) {
     selectOnIndeterminate: false
   };
 
+  this._toggleAllSelection = debounce_default()(10, function (states) {
+    var data = states.data || [];
+    if (data.length === 0) return;
+    var selection = this.states.selection;
+    // when only some rows are selected (but not all), select or deselect all of them
+    // depending on the value of selectOnIndeterminate
+    var value = states.selectOnIndeterminate ? !states.isAllSelected : !(states.isAllSelected || selection.length);
+    var selectionChanged = false;
+    data.forEach(function (item, index) {
+      if (states.selectable) {
+        if (states.selectable.call(null, item, index) && toggleRowSelection(states, item, value)) {
+          selectionChanged = true;
+        }
+      } else {
+        if (toggleRowSelection(states, item, value)) {
+          selectionChanged = true;
+        }
+      }
+    });
+    var table = this.table;
+    if (selectionChanged) {
+      table.$emit('selection-change', selection ? selection.slice() : []);
+    }
+    table.$emit('select-all', selection);
+    states.isAllSelected = value;
+  });
+
   for (var prop in initialState) {
     if (initialState.hasOwnProperty(prop) && this.states.hasOwnProperty(prop)) {
       this.states[prop] = initialState[prop];
@@ -1073,7 +1096,7 @@ var TableStore = function TableStore(table) {
   }
 };
 
-TableStore.prototype.mutations = {
+table_store_TableStore.prototype.mutations = {
   setData: function setData(states, data) {
     var _this = this;
 
@@ -1166,24 +1189,6 @@ TableStore.prototype.mutations = {
     var _this2 = this;
 
     states.data = table_store_sortData(states.filteredData || states._data || [], states);
-
-    var _table = this.table,
-        $el = _table.$el,
-        highlightCurrentRow = _table.highlightCurrentRow;
-
-    if ($el && highlightCurrentRow) {
-      var data = states.data;
-      var tr = $el.querySelector('tbody').children;
-      var rows = [].filter.call(tr, function (row) {
-        return Object(dom_["hasClass"])(row, 'el-table__row');
-      });
-      var row = rows[data.indexOf(states.currentRow)];
-
-      [].forEach.call(rows, function (row) {
-        return Object(dom_["removeClass"])(row, 'current-row');
-      });
-      Object(dom_["addClass"])(row, 'current-row');
-    }
 
     if (!options || !options.silent) {
       this.table.$emit('sort-change', {
@@ -1336,36 +1341,9 @@ TableStore.prototype.mutations = {
 
     this.updateAllSelected();
   },
-
-
-  toggleAllSelection: debounce_default()(10, function (states) {
-    var data = states.data || [];
-    if (data.length === 0) return;
-    var selection = this.states.selection;
-    // when only some rows are selected (but not all), select or deselect all of them
-    // depending on the value of selectOnIndeterminate
-    var value = states.selectOnIndeterminate ? !states.isAllSelected : !(states.isAllSelected || selection.length);
-    var selectionChanged = false;
-
-    data.forEach(function (item, index) {
-      if (states.selectable) {
-        if (states.selectable.call(null, item, index) && toggleRowSelection(states, item, value)) {
-          selectionChanged = true;
-        }
-      } else {
-        if (toggleRowSelection(states, item, value)) {
-          selectionChanged = true;
-        }
-      }
-    });
-
-    var table = this.table;
-    if (selectionChanged) {
-      table.$emit('selection-change', selection ? selection.slice() : []);
-    }
-    table.$emit('select-all', selection);
-    states.isAllSelected = value;
-  })
+  toggleAllSelection: function toggleAllSelection(state) {
+    this._toggleAllSelection(state);
+  }
 };
 
 var doFlattenColumns = function doFlattenColumns(columns) {
@@ -1380,7 +1358,7 @@ var doFlattenColumns = function doFlattenColumns(columns) {
   return result;
 };
 
-TableStore.prototype.updateColumns = function () {
+table_store_TableStore.prototype.updateColumns = function () {
   var states = this.states;
   var _columns = states._columns || [];
   states.fixedColumns = _columns.filter(function (column) {
@@ -1412,11 +1390,11 @@ TableStore.prototype.updateColumns = function () {
   states.isComplex = states.fixedColumns.length > 0 || states.rightFixedColumns.length > 0;
 };
 
-TableStore.prototype.isSelected = function (row) {
+table_store_TableStore.prototype.isSelected = function (row) {
   return (this.states.selection || []).indexOf(row) > -1;
 };
 
-TableStore.prototype.clearSelection = function () {
+table_store_TableStore.prototype.clearSelection = function () {
   var states = this.states;
   states.isAllSelected = false;
   var oldSelection = states.selection;
@@ -1428,7 +1406,7 @@ TableStore.prototype.clearSelection = function () {
   }
 };
 
-TableStore.prototype.setExpandRowKeys = function (rowKeys) {
+table_store_TableStore.prototype.setExpandRowKeys = function (rowKeys) {
   var expandRows = [];
   var data = this.states.data;
   var rowKey = this.states.rowKey;
@@ -1444,14 +1422,14 @@ TableStore.prototype.setExpandRowKeys = function (rowKeys) {
   this.states.expandRows = expandRows;
 };
 
-TableStore.prototype.toggleRowSelection = function (row, selected) {
+table_store_TableStore.prototype.toggleRowSelection = function (row, selected) {
   var changed = toggleRowSelection(this.states, row, selected);
   if (changed) {
     this.table.$emit('selection-change', this.states.selection ? this.states.selection.slice() : []);
   }
 };
 
-TableStore.prototype.toggleRowExpansion = function (row, expanded) {
+table_store_TableStore.prototype.toggleRowExpansion = function (row, expanded) {
   var changed = toggleRowExpansion(this.states, row, expanded);
   if (changed) {
     this.table.$emit('expand-change', row, this.states.expandRows);
@@ -1459,7 +1437,7 @@ TableStore.prototype.toggleRowExpansion = function (row, expanded) {
   }
 };
 
-TableStore.prototype.isRowExpanded = function (row) {
+table_store_TableStore.prototype.isRowExpanded = function (row) {
   var _states = this.states,
       _states$expandRows = _states.expandRows,
       expandRows = _states$expandRows === undefined ? [] : _states$expandRows,
@@ -1472,7 +1450,7 @@ TableStore.prototype.isRowExpanded = function (row) {
   return expandRows.indexOf(row) !== -1;
 };
 
-TableStore.prototype.cleanSelection = function () {
+table_store_TableStore.prototype.cleanSelection = function () {
   var selection = this.states.selection || [];
   var data = this.states.data;
   var rowKey = this.states.rowKey;
@@ -1501,7 +1479,7 @@ TableStore.prototype.cleanSelection = function () {
   }
 };
 
-TableStore.prototype.clearFilter = function (columnKeys) {
+table_store_TableStore.prototype.clearFilter = function (columnKeys) {
   var states = this.states;
   var _table$$refs = this.table.$refs,
       tableHeader = _table$$refs.tableHeader,
@@ -1553,7 +1531,7 @@ TableStore.prototype.clearFilter = function (columnKeys) {
   }
 };
 
-TableStore.prototype.clearSort = function () {
+table_store_TableStore.prototype.clearSort = function () {
   var states = this.states;
   if (!states.sortingColumn) return;
   states.sortingColumn.order = null;
@@ -1565,7 +1543,7 @@ TableStore.prototype.clearSort = function () {
   });
 };
 
-TableStore.prototype.updateAllSelected = function () {
+table_store_TableStore.prototype.updateAllSelected = function () {
   var states = this.states;
   var selection = states.selection,
       rowKey = states.rowKey,
@@ -1610,14 +1588,14 @@ TableStore.prototype.updateAllSelected = function () {
   states.isAllSelected = isAllSelected;
 };
 
-TableStore.prototype.scheduleLayout = function (updateColumns) {
+table_store_TableStore.prototype.scheduleLayout = function (updateColumns) {
   if (updateColumns) {
     this.updateColumns();
   }
   this.table.debouncedUpdateLayout();
 };
 
-TableStore.prototype.setCurrentRowKey = function (key) {
+table_store_TableStore.prototype.setCurrentRowKey = function (key) {
   var states = this.states;
   var rowKey = states.rowKey;
   if (!rowKey) throw new Error('[Table] row-key should not be empty.');
@@ -1627,7 +1605,7 @@ TableStore.prototype.setCurrentRowKey = function (key) {
   states.currentRow = info ? info.row : null;
 };
 
-TableStore.prototype.updateCurrentRow = function () {
+table_store_TableStore.prototype.updateCurrentRow = function () {
   var states = this.states;
   var table = this.table;
   var data = states.data || [];
@@ -1656,7 +1634,7 @@ TableStore.prototype.updateCurrentRow = function () {
   }
 };
 
-TableStore.prototype.commit = function (name) {
+table_store_TableStore.prototype.commit = function (name) {
   var mutations = this.mutations;
   if (mutations[name]) {
     for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
@@ -1669,7 +1647,7 @@ TableStore.prototype.commit = function (name) {
   }
 };
 
-/* harmony default export */ var table_store = (TableStore);
+/* harmony default export */ var table_store = (table_store_TableStore);
 // EXTERNAL MODULE: external "element-ui/lib/utils/scrollbar-width"
 var scrollbar_width_ = __webpack_require__(34);
 var scrollbar_width_default = /*#__PURE__*/__webpack_require__.n(scrollbar_width_);
@@ -1937,6 +1915,9 @@ var table_layout_TableLayout = function () {
 }();
 
 /* harmony default export */ var table_layout = (table_layout_TableLayout);
+// EXTERNAL MODULE: external "element-ui/lib/utils/dom"
+var dom_ = __webpack_require__(2);
+
 // EXTERNAL MODULE: external "element-ui/lib/tooltip"
 var tooltip_ = __webpack_require__(24);
 var tooltip_default = /*#__PURE__*/__webpack_require__.n(tooltip_);
@@ -2131,48 +2112,6 @@ var table_body_typeof = typeof Symbol === "function" && typeof Symbol.iterator =
   },
 
 
-  watch: {
-    'store.states.hoverRow': function storeStatesHoverRow(newVal, oldVal) {
-      if (!this.store.states.isComplex) return;
-      var el = this.$el;
-      if (!el) return;
-      var tr = el.querySelector('tbody').children;
-      var rows = [].filter.call(tr, function (row) {
-        return Object(dom_["hasClass"])(row, 'el-table__row');
-      });
-      var oldRow = rows[oldVal];
-      var newRow = rows[newVal];
-      if (oldRow) {
-        Object(dom_["removeClass"])(oldRow, 'hover-row');
-      }
-      if (newRow) {
-        Object(dom_["addClass"])(newRow, 'hover-row');
-      }
-    },
-    'store.states.currentRow': function storeStatesCurrentRow(newVal, oldVal) {
-      if (!this.highlight) return;
-      var el = this.$el;
-      if (!el) return;
-      var data = this.store.states.data;
-      var tr = el.querySelector('tbody').children;
-      var rows = [].filter.call(tr, function (row) {
-        return Object(dom_["hasClass"])(row, 'el-table__row');
-      });
-      var oldRow = rows[data.indexOf(oldVal)];
-      var newRow = rows[data.indexOf(newVal)];
-      if (oldRow) {
-        Object(dom_["removeClass"])(oldRow, 'current-row');
-      } else {
-        [].forEach.call(rows, function (row) {
-          return Object(dom_["removeClass"])(row, 'current-row');
-        });
-      }
-      if (newRow) {
-        Object(dom_["addClass"])(newRow, 'current-row');
-      }
-    }
-  },
-
   computed: {
     table: function table() {
       return this.$parent;
@@ -2270,6 +2209,10 @@ var table_body_typeof = typeof Symbol === "function" && typeof Symbol.iterator =
       var classes = ['el-table__row'];
       if (this.table.highlightCurrentRow && row === this.store.states.currentRow) {
         classes.push('current-row');
+      }
+
+      if (rowIndex === this.store.states.hoverRow) {
+        classes.push('hover-row');
       }
 
       if (this.stripe && rowIndex % 2 === 1) {
@@ -2395,7 +2338,7 @@ var table_body_typeof = typeof Symbol === "function" && typeof Symbol.iterator =
           table.$emit('cell-' + name, row, column, cell, event);
         }
       }
-      table.$emit('row-' + name, row, event, column);
+      table.$emit('row-' + name, row, column, event);
     },
     handleExpandClick: function handleExpandClick(row, e) {
       e.stopPropagation();
