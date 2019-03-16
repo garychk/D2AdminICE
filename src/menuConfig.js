@@ -96,4 +96,4 @@ const headerMenuConfig = [
 
 export const menuHeader = util.recursiveMenuConfig(headerMenuConfig); // 导出侧边栏菜单
 
-export const menuAside = util.recursiveMenuConfig(asideMenuConfi
+export const menuAside = util.recursiveMenuConfig(asideMenuConfig);
