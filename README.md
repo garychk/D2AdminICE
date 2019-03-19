@@ -1,1 +1,3 @@
-D2AdminICE
+D2AdminICE 基于VUE+element后台管理框架，后端接口采用ABP Core 2.0 REST服务架构，旨在为企业提供信息化管理解决方案，系统包含了常用管理模块，如管理员、用户、租户管理、内容管理、分类管理、权限管理、部门管理、以及模块管理。
+项目预览地址：http://d2.oplug.cn
+登录用户admin，密码：123qwe
